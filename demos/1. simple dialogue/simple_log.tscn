@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://bl1ul621fkvxw"]
+
+[ext_resource type="Script" path="res://demos/1. simple dialogue/simple_log.gd" id="1_km05v"]
+[ext_resource type="Script" path="res://demos/1. simple dialogue/simple_dialogue.gd" id="2_clmvy"]
+
+[node name="DialogueEngineDemoVBoxContainer" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_km05v")
+dialogue_gdscript = ExtResource("2_clmvy")
+
+[node name="DialogueEngineDemoQuickStartPanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+
+[node name="DialogueEngineDemoQuickStartLabel" type="Label" parent="DialogueEngineDemoQuickStartPanelContainer"]
+layout_mode = 2
+text = "Press <Enter> or <Space> to progress the dialogue."
+horizontal_alignment = 1
+
+[node name="LogRichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 2
+text = "Log:"
+fit_content = true

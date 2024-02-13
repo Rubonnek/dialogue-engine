@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://debwoww4x115m"]
+
+[node name="IntroductionDemoMarginContainer" type="CenterContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IntroductionDemoVBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="IntroductionDemoExaplanationPanelContainer" type="PanelContainer" parent="IntroductionDemoVBoxContainer"]
+layout_mode = 2
+
+[node name="IntroductionDemoExaplanationLabel" type="Label" parent="IntroductionDemoVBoxContainer/IntroductionDemoExaplanationPanelContainer"]
+layout_mode = 2
+text = "Basic dialogue processing is composed of two parts:"
+horizontal_alignment = 1
+
+[node name="IntroductionDemoPreparationLabel" type="Label" parent="IntroductionDemoVBoxContainer"]
+layout_mode = 2
+text = "1. Dialogue tree preparation:"
+
+[node name="IntroductionDemoPreparationExampleCodeEdit" type="CodeEdit" parent="IntroductionDemoVBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
+text = "extends DialogueEngine
+
+func _setup() -> void:
+	add_text_entry(\"First dialogue message\")
+	add_text_entry(\"Second dialogue message\")
+	add_text_entry(\"Third dialogue message\")
+	# and so on"
+editable = false
+scroll_fit_content_height = true
+symbol_lookup_on_click = true
+auto_brace_completion_highlight_matching = true
+
+[node name="IntroductionDemoTraversalLabel" type="Label" parent="IntroductionDemoVBoxContainer"]
+layout_mode = 2
+text = "2. And tree traversal:"
+
+[node name="IntroductionDemoTraversalExamplePanelContainer" type="PanelContainer" parent="IntroductionDemoVBoxContainer"]
+layout_mode = 2
+
+[node name="IntroductionDemoTraversalExampleLabel" type="Label" parent="IntroductionDemoVBoxContainer/IntroductionDemoTraversalExamplePanelContainer"]
+layout_mode = 2
+text = "dialogue_engine.advance() # called when convenient"

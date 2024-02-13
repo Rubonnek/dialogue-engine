@@ -1,0 +1,100 @@
+[gd_scene load_steps=2 format=3 uid="uid://dr6h7qrg0dy0c"]
+
+[ext_resource type="Script" path="res://addons/rubonnek.dialogue_engine/debugger/dialogue_engine_viewer.gd" id="1_i42ty"]
+
+[node name="DialogueEngine" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 240)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_i42ty")
+
+[node name="DialogueEngineViewerHSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 2
+
+[node name="DialogueEngineViewerEngineSelectionVBoxContainer" type="VBoxContainer" parent="DialogueEngineViewerHSplitContainer"]
+layout_mode = 2
+
+[node name="DialogueEngineViewerEngineSelectionLineEdit" type="LineEdit" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerEngineSelectionVBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+placeholder_text = "Filter Dialogues"
+
+[node name="DialogueEngineViewerEngineSelectionTree" type="Tree" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerEngineSelectionVBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_vertical = 3
+hide_root = true
+
+[node name="DialogueEngineViewerGraphEditDisplayVBoxContainer" type="VBoxContainer" parent="DialogueEngineViewerHSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="DialogueEngineViewerGraphEditDisplayPanelContainer" type="PanelContainer" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DialogueEngineViewerGraphEdit" type="GraphEdit" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerGraphEditDisplayPanelContainer"]
+layout_mode = 2
+
+[node name="DialogueEngineViewerInputBlockerCenterContainer" type="CenterContainer" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerGraphEditDisplayPanelContainer"]
+layout_mode = 2
+
+[node name="DialogueEngineViewerInputBlockerHintRichTextLabel" type="RichTextLabel" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerGraphEditDisplayPanelContainer/DialogueEngineViewerInputBlockerCenterContainer"]
+layout_mode = 2
+text = "Run project to visualize the dialogue."
+fit_content = true
+autowrap_mode = 0
+
+[node name="DialogueEngineViewerSearchHBoxContainer" type="HBoxContainer" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer"]
+visible = false
+layout_mode = 2
+alignment = 1
+
+[node name="DialogueEngineViewerSearchHintLabel" type="Label" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerSearchHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+
+[node name="DialogueEngineViewerNameSearchHBoxContainer" type="HBoxContainer" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerSearchHBoxContainer"]
+layout_mode = 2
+
+[node name="DialogueEngineViewerNameSearchLabel" type="Label" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerSearchHBoxContainer/DialogueEngineViewerNameSearchHBoxContainer"]
+layout_mode = 2
+text = "Name:"
+
+[node name="DialogueEngineViewerNameSearchLineEdit" type="LineEdit" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerSearchHBoxContainer/DialogueEngineViewerNameSearchHBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+caret_blink = true
+caret_blink_interval = 0.5
+
+[node name="DialogueEngineViewerNameSearchChangeNameButton" type="Button" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerSearchHBoxContainer/DialogueEngineViewerNameSearchHBoxContainer"]
+layout_mode = 2
+text = "Change"
+
+[node name="DialogueEngineViewerNodeSearchHBoxContainer" type="HBoxContainer" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerSearchHBoxContainer"]
+layout_mode = 2
+
+[node name="DialogueEngineViewerNodeSearchLabel" type="Label" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerSearchHBoxContainer/DialogueEngineViewerNodeSearchHBoxContainer"]
+layout_mode = 2
+text = "Search Node : "
+
+[node name="DialogueEngineViewerNodeSearchBarLineEdit" type="LineEdit" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerSearchHBoxContainer/DialogueEngineViewerNodeSearchHBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+caret_blink = true
+caret_blink_interval = 0.5
+
+[node name="DialogueEngineViewerNodeSearchPreviousButton" type="Button" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerSearchHBoxContainer/DialogueEngineViewerNodeSearchHBoxContainer"]
+layout_mode = 2
+tooltip_text = "ctrl + shift + LEFT"
+text = "<"
+
+[node name="DialogueEngineViewerNodeSearchNextButton" type="Button" parent="DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerSearchHBoxContainer/DialogueEngineViewerNodeSearchHBoxContainer"]
+layout_mode = 2
+tooltip_text = "ctrl + shift + RIGHT"
+text = ">"

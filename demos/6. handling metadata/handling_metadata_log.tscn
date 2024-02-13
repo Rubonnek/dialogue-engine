@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://jeupskd3oea8"]
+
+[ext_resource type="Script" path="res://demos/6. handling metadata/handling_metadata_log.gd" id="1_0ot0q"]
+[ext_resource type="Script" path="res://demos/6. handling metadata/handling_metadata_dialogue.gd" id="2_tq44t"]
+
+[node name="DialogueEngineDemoVBoxContainer" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0ot0q")
+dialogue_gdscript = ExtResource("2_tq44t")
+
+[node name="DialogueEngineDemoQuickStartPanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+
+[node name="DialogueEngineDemoQuickStartLabel" type="Label" parent="DialogueEngineDemoQuickStartPanelContainer"]
+layout_mode = 2
+text = "Press <Enter> or <Space> to progress the dialogue."
+horizontal_alignment = 1
+
+[node name="LogRichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 2
+text = "Log:"
+fit_content = true

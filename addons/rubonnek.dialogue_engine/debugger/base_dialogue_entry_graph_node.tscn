@@ -1,0 +1,238 @@
+[gd_scene format=3 uid="uid://c0mlk6gyr4af1"]
+
+[node name="DialogueEntryGraphNode" type="GraphNode"]
+offset_right = 9.0
+offset_bottom = 55.0
+title = "DialogueEntryID: 0"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 0
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+slot/5/left_enabled = false
+slot/5/left_type = 0
+slot/5/left_color = Color(1, 1, 1, 1)
+slot/5/left_icon = null
+slot/5/right_enabled = false
+slot/5/right_type = 0
+slot/5/right_color = Color(1, 1, 1, 1)
+slot/5/right_icon = null
+slot/5/draw_stylebox = true
+slot/6/left_enabled = false
+slot/6/left_type = 0
+slot/6/left_color = Color(1, 1, 1, 1)
+slot/6/left_icon = null
+slot/6/right_enabled = false
+slot/6/right_type = 0
+slot/6/right_color = Color(1, 1, 1, 1)
+slot/6/right_icon = null
+slot/6/draw_stylebox = true
+slot/7/left_enabled = false
+slot/7/left_type = 0
+slot/7/left_color = Color(1, 1, 1, 1)
+slot/7/left_icon = null
+slot/7/right_enabled = false
+slot/7/right_type = 0
+slot/7/right_color = Color(1, 1, 1, 1)
+slot/7/right_icon = null
+slot/7/draw_stylebox = true
+slot/8/left_enabled = false
+slot/8/left_type = 0
+slot/8/left_color = Color(1, 1, 1, 1)
+slot/8/left_icon = null
+slot/8/right_enabled = false
+slot/8/right_type = 0
+slot/8/right_color = Color(1, 1, 1, 1)
+slot/8/right_icon = null
+slot/8/draw_stylebox = true
+
+[node name="BranchIDHSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 2
+dragger_visibility = 1
+
+[node name="BranchIDDelimeterRichTextLabel" type="RichTextLabel" parent="BranchIDHSplitContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+bbcode_enabled = true
+text = "[color=ff004d][code]BranchID:[/code][/color]"
+fit_content = true
+autowrap_mode = 0
+
+[node name="BranchIDLabel" type="Label" parent="BranchIDHSplitContainer"]
+layout_mode = 2
+text = "0
+"
+
+[node name="ConditionHSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 2
+dragger_visibility = 1
+
+[node name="ConditionDelimeterRichTextLabel" type="RichTextLabel" parent="ConditionHSplitContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+bbcode_enabled = true
+text = "[color=ffec27][code]Condition:[/code][/color]"
+fit_content = true
+autowrap_mode = 0
+
+[node name="ConditionBackgroundPanelContainer" type="PanelContainer" parent="ConditionHSplitContainer"]
+layout_mode = 2
+
+[node name="ConditionRichTextLabel" type="RichTextLabel" parent="ConditionHSplitContainer/ConditionBackgroundPanelContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "<Condition>"
+fit_content = true
+autowrap_mode = 0
+
+[node name="ConditionTrueGoToRichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 2
+bbcode_enabled = true
+text = "[right][color=green]True[/color][/right]"
+fit_content = true
+autowrap_mode = 0
+
+[node name="ConditionFalseGoToRichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 2
+bbcode_enabled = true
+text = "[right][color=red]False[/color][/right]"
+fit_content = true
+autowrap_mode = 0
+
+[node name="TextHSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 2
+dragger_visibility = 1
+
+[node name="TextDelimeterRichTextLabel" type="RichTextLabel" parent="TextHSplitContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+bbcode_enabled = true
+text = "[color=29adff][code]Text:[/code][/color]"
+fit_content = true
+autowrap_mode = 0
+
+[node name="TextBackgroundPanelContainer" type="PanelContainer" parent="TextHSplitContainer"]
+layout_mode = 2
+
+[node name="TextRichTextLabel" type="RichTextLabel" parent="TextHSplitContainer/TextBackgroundPanelContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "<Text>"
+fit_content = true
+autowrap_mode = 0
+
+[node name="FormatHSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 2
+dragger_visibility = 1
+
+[node name="FormatDelimeterRichTextLabel" type="RichTextLabel" parent="FormatHSplitContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=ad6ed4][code]Format:[/code][/color]"
+fit_content = true
+autowrap_mode = 0
+
+[node name="FormatBackgroundPanelContainer" type="PanelContainer" parent="FormatHSplitContainer"]
+layout_mode = 2
+
+[node name="FormatRichTextLabel" type="RichTextLabel" parent="FormatHSplitContainer/FormatBackgroundPanelContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "<Format>"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+
+[node name="GoToRichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 2
+bbcode_enabled = true
+text = "[right][color=008751]Goto[/color][/right]"
+fit_content = true
+autowrap_mode = 0
+
+[node name="Option0HSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 2
+dragger_visibility = 1
+
+[node name="Option0DelimeterRichTextLabel" type="RichTextLabel" parent="Option0HSplitContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=ffa300][code]Option 0:[/code][/color]"
+fit_content = true
+autowrap_mode = 0
+
+[node name="Option0BackgroundPanelContainer" type="PanelContainer" parent="Option0HSplitContainer"]
+layout_mode = 2
+
+[node name="Option0RichTextLabel" type="RichTextLabel" parent="Option0HSplitContainer/Option0BackgroundPanelContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "<TextOption0>"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+
+[node name="MetadataHSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 2
+dragger_visibility = 1
+
+[node name="MetadataDelimeterRichTextLabel" type="RichTextLabel" parent="MetadataHSplitContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=ff77a8][code]Metadata:[/code][/color]"
+fit_content = true
+autowrap_mode = 0
+
+[node name="MetadataBackgroundPanelContainer" type="PanelContainer" parent="MetadataHSplitContainer"]
+layout_mode = 2
+
+[node name="MetadataRichTextLabel" type="RichTextLabel" parent="MetadataHSplitContainer/MetadataBackgroundPanelContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "<Metadata>"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
