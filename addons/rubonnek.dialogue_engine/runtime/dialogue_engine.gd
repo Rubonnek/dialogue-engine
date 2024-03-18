@@ -143,10 +143,10 @@ func advance(p_instant_finish : bool = false) -> void:
 		p_instant_finish = true # finish abruptly and as safely as possible
 
 	if _m_read_needle == 0:
-		var _ignore_1 : int = emit_signal(&"dialogue_started")
+		dialogue_started.emit()
 
 	if _m_invalid_goto_detected:
-		var _ignore_2 : int = emit_signal(&"dialogue_cancelled")
+		dialogue_cancelled.emit()
 		__reset_needles()
 
 	if p_instant_finish:
@@ -154,7 +154,7 @@ func advance(p_instant_finish : bool = false) -> void:
 	else:
 		var current_dialogue_entry : DialogueEntry = get_current_entry()
 		if is_instance_valid(current_dialogue_entry) and current_dialogue_entry.has_condition():
-			var _ignore_3 : int = emit_signal(&"entry_visited", current_dialogue_entry)
+			entry_visited.emit(current_dialogue_entry)
 			var condition : Callable = current_dialogue_entry.get_condition()
 			var result : bool = condition.call()
 			var target_goto_id : int = current_dialogue_entry.get_condition_goto_ids()[result]
@@ -164,7 +164,7 @@ func advance(p_instant_finish : bool = false) -> void:
 				_m_branch_id_needle = target_dialogue_entry.get_branch_id()
 			else:
 				push_warning("DialogueEngine: Invalid condition goto for on entry ID '%d' found.\nCancelling dialogue." % [current_dialogue_entry.get_id()])
-				var _ignore_4 : int = emit_signal(&"dialogue_cancelled")
+				dialogue_cancelled.emit()
 				__reset_needles()
 				return
 		elif _m_read_needle != 0 and is_instance_valid(current_dialogue_entry) and current_dialogue_entry.has_options():
@@ -177,12 +177,12 @@ func advance(p_instant_finish : bool = false) -> void:
 					_m_branch_id_needle = target_dialogue_entry.get_branch_id()
 				else:
 					push_warning("DialogueEngine: Invalid option goto for option ID '%d' with text '%s'.\nAssociated DialogueEntry ID '%d' with text '%s'\nCancelling dialogue." % [option_goto_id, current_dialogue_entry.get_option_text(option_goto_id), current_dialogue_entry.get_id(), current_dialogue_entry.get_text()])
-					var _ignore_5 : int = emit_signal(&"dialogue_cancelled")
+					dialogue_cancelled.emit()
 					__reset_needles()
 					return
 			else:
 				push_warning("DialogueEngine: Invalid chosen option for option for DialogueEntry ID '%d' with text '%s'.\nCancelling dialogue." % [current_dialogue_entry.get_id(), current_dialogue_entry.get_text()])
-				var _ignore_6 : int = emit_signal(&"dialogue_cancelled")
+				dialogue_cancelled.emit()
 				__reset_needles()
 				return
 
@@ -207,12 +207,12 @@ func advance(p_instant_finish : bool = false) -> void:
 				else:
 					push_warning("DialogueEngine: Invalid top-level goto detected on DialogueEntry ID '%d' with text '%s'.\nDialogue will be cancelled upon the next advance() call." % [target_dialogue_entry.get_id(), target_dialogue_entry.get_text()])
 					_m_invalid_goto_detected = true
-			var _ignore_7 : int = emit_signal(&"entry_visited", target_dialogue_entry)
-			var _ignore_8 : int = emit_signal(&"dialogue_continued", target_dialogue_entry)
+			entry_visited.emit(target_dialogue_entry)
+			dialogue_continued.emit(target_dialogue_entry)
 			return
 
 	__reset_needles()
-	var _ignore_9 : int = emit_signal(&"dialogue_finished")
+	dialogue_finished.emit()
 	return
 
 
@@ -278,7 +278,7 @@ func pop_back() -> DialogueEntry:
 func reset() -> void:
 	# If we are not finished reading, the dialogue was cancelled -- notify listeners
 	if _m_read_needle != 0 and _m_read_needle != _m_dialogue_tree.size():
-		var _ignore : int = emit_signal(&"dialogue_cancelled")
+		dialogue_cancelled.emit()
 	__reset_needles()
 
 
