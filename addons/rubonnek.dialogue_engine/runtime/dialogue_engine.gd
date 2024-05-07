@@ -334,7 +334,8 @@ func get_name() -> String:
 func _init() -> void:
 	if EngineDebugger.is_active():
 		# Register
-		var path : String = (get_script() as Resource).get_path()
+		var current_script : Resource = get_script()
+		var path : String = current_script.get_path()
 		var name : String = get_name()
 		EngineDebugger.send_message("dialogue_engine:register_engine", [get_instance_id(), name, path])
 
