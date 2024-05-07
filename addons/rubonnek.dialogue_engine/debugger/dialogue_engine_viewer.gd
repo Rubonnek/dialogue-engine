@@ -16,11 +16,11 @@ func _ready() -> void:
 	var _root : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.create_item()
 
 	# Connect Tree Signals
-	var _success : int = m_dialogue_engine_viewer_engine_selection_tree.connect(&"item_selected", Callable(self, &"__on_tree_item_selected"))
-	_success = m_dialogue_engine_viewer_engine_selection_tree.connect(&"nothing_selected", Callable(self, &"__on_tree_nothing_selected"))
+	var _success : int = m_dialogue_engine_viewer_engine_selection_tree.item_selected.connect(__on_tree_item_selected)
+	_success = m_dialogue_engine_viewer_engine_selection_tree.nothing_selected.connect(__on_tree_nothing_selected)
 
 	# Connect line edit for filtering the DialogueEngines list
-	_success = m_dialogue_engine_viewer_engine_selection_line_edit.connect(&"text_changed", Callable(self, &"__on_dialogue_selection_line_edit_text_changed"))
+	_success = m_dialogue_engine_viewer_engine_selection_line_edit.text_changed.connect(__on_dialogue_selection_line_edit_text_changed)
 
 
 func __on_dialogue_selection_line_edit_text_changed(p_filter : String) -> void:

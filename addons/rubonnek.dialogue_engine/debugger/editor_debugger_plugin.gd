@@ -11,8 +11,8 @@ func _setup_session(p_session_id : int) -> void:
 	var editor_debugger_session : EditorDebuggerSession = get_session(p_session_id)
 
 	# Listen to the session started and stopped signals.
-	var _success : Error = editor_debugger_session.connect(&"started", Callable(dialogue_engine_viewer, &"__on_session_started"))
-	_success = editor_debugger_session.connect(&"stopped", Callable(dialogue_engine_viewer, &"__on_session_stopped"))
+	@warning_ignore("unsafe_property_access", "unsafe_call_argument")
+	var _success : int = editor_debugger_session.started.connect(dialogue_engine_viewer.__on_session_started)
 
 	# Add the session tab
 	editor_debugger_session.add_session_tab(dialogue_engine_viewer)
