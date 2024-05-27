@@ -1,0 +1,82 @@
+[gd_scene load_steps=5 format=3 uid="uid://djkxscwuw617h"]
+
+[ext_resource type="Texture2D" uid="uid://cr0rdb3ab8xwg" path="res://icon.svg" id="1_5ptqw"]
+[ext_resource type="Script" path="res://demos/9. complex dialogue/complex_dialogue.gd" id="1_qenq2"]
+[ext_resource type="Script" path="res://demos/9. complex dialogue/dialogue.gd" id="2_buq0b"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hqwn4"]
+bg_color = Color(0, 0, 0, 1)
+
+[node name="ComplexDialogue" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qenq2")
+dialogue_gdscript = ExtResource("2_buq0b")
+
+[node name="DialogueEngineDemoQuickStartPanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+
+[node name="DialogueEngineDemoQuickStartLabel" type="Label" parent="DialogueEngineDemoQuickStartPanelContainer"]
+layout_mode = 2
+text = "Press <Enter> or <Space> to progress the dialogue."
+horizontal_alignment = 1
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Box" type="PanelContainer" parent="Center"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hqwn4")
+
+[node name="Margin" type="MarginContainer" parent="Center/Box"]
+custom_minimum_size = Vector2(384, 384)
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="Center/Box/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="VBox" type="VBoxContainer" parent="Center/Box/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Text" type="RichTextLabel" parent="Center/Box/Margin/VBox/VBox"]
+layout_mode = 2
+text = "Log:"
+fit_content = true
+
+[node name="Peter" type="TextureRect" parent="Center/Box/Margin/VBox"]
+visible = false
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_horizontal = 0
+texture = ExtResource("1_5ptqw")
+expand_mode = 1
+
+[node name="John" type="TextureRect" parent="Center/Box/Margin/VBox"]
+visible = false
+modulate = Color(1, 0.443137, 1, 1)
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_horizontal = 8
+texture = ExtResource("1_5ptqw")
+expand_mode = 1
+
+[node name="Animator" type="AnimationPlayer" parent="."]
