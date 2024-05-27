@@ -72,7 +72,7 @@ expand_mode = 1
 
 [node name="John" type="TextureRect" parent="Center/Box/Margin/VBox"]
 visible = false
-modulate = Color(1, 0.443137, 1, 1)
+modulate = Color(0.980392, 0.631373, 1, 1)
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -80,3 +80,5 @@ texture = ExtResource("1_5ptqw")
 expand_mode = 1
 
 [node name="Animator" type="AnimationPlayer" parent="."]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
