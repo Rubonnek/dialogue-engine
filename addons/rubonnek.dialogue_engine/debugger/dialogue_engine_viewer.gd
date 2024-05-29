@@ -69,7 +69,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			# Create the associated tree_item and add it as metadata against the tree itself so that we can extract it easily when we receive messages from this specific DialogueEngine instance id
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.create_item()
 			dialogue_engine_tree_item.set_text(column, target_name)
-			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
+			var meta_key : String = __generate_meta_key(dialogue_engine_id)
 			m_dialogue_engine_viewer_engine_selection_tree.set_meta(meta_key, dialogue_engine_tree_item)
 
 			# Store a local DialogueEngine as metadata -- reuse one if provided.
@@ -80,7 +80,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"dialogue_engine:dialogue_started":
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
+			var meta_key : String = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			if stored_dialogue_engine.has_meta(&"dialogue_entries_visited"):
@@ -96,13 +96,13 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 		"dialogue_engine:entry_visited":
 			# Track the entry visited to highlight it on the GraphEdit
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
+			var meta_key : String = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			var dialogue_entry_id : int = p_data[1]
 			var dialogue_entry : DialogueEntry = stored_dialogue_engine.get_entry_at(dialogue_entry_id)
 			var dialogue_entries_visited : Array = stored_dialogue_engine.get_meta(&"dialogue_entries_visited", [])
-			dialogue_entries_visited.push_back(StringName(dialogue_entry.get_id_as_text()))
+			dialogue_entries_visited.push_back(dialogue_entry.get_id_as_text())
 			if not stored_dialogue_engine.has_meta(&"dialogue_entries_visited"):
 				stored_dialogue_engine.set_meta(&"dialogue_entries_visited", dialogue_entries_visited)
 			__update_graph_node_highlights_if_needed(stored_dialogue_engine)
@@ -111,7 +111,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 		"dialogue_engine:dialogue_finished":
 			# Track the entry visited to highlight it on the GraphEdit
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
+			var meta_key : String = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			stored_dialogue_engine.set_meta(&"dialogue_finished", true)
@@ -121,7 +121,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 		"dialogue_engine:dialogue_cancelled":
 			# Track the entry visited to highlight it on the GraphEdit
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
+			var meta_key : String = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			stored_dialogue_engine.set_meta(&"dialogue_cancelled", true)
@@ -130,7 +130,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"dialogue_engine:set_name":
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
+			var meta_key : String = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			var remote_name : String = p_data[1]
@@ -140,7 +140,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"dialogue_engine:set_branch_id":
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
+			var meta_key : String = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			var branch_id : int = p_data[1]
@@ -150,7 +150,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"dialogue_engine:sync_entry":
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
+			var meta_key : String = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			var remote_dialogue_entry_id : int = p_data[1]
@@ -170,8 +170,8 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 	return false
 
 
-func __generate_meta_key(p_id : int) -> StringName:
-	return StringName("_" + String.num_uint64(p_id))
+func __generate_meta_key(p_id : int) -> String:
+	return "_" + String.num_uint64(p_id)
 # ==== EDITOR DEBUGGER PLUGIN PASSTHROUGH FUNCTIONS ENDS ======
 
 
@@ -183,7 +183,7 @@ func __on_session_started() -> void:
 	for child : TreeItem in root.get_children():
 		var dialogue_engine : DialogueEngine = child.get_metadata(0)
 		var dialogue_engine_id : int = dialogue_engine.get_meta(&"id")
-		var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
+		var meta_key : String = __generate_meta_key(dialogue_engine_id)
 		m_dialogue_engine_viewer_engine_selection_tree.remove_meta(meta_key)
 
 	# Clear the TreeItem objects
@@ -221,7 +221,7 @@ func __update_graph_if_needed(p_dialogue_engine_id : int) -> void:
 func __is_selected_tree_item_related_to_dialogue_engine(p_dialogue_engine_id : int) -> bool:
 	var selected_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_selected()
 	if is_instance_valid(selected_tree_item):
-		var meta_key : StringName = __generate_meta_key(p_dialogue_engine_id)
+		var meta_key : String = __generate_meta_key(p_dialogue_engine_id)
 		var target_dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 		if target_dialogue_engine_tree_item == selected_tree_item:
 			return true
@@ -238,7 +238,7 @@ func __update_graph_node_highlights_if_needed(p_dialogue_engine : DialogueEngine
 	if __is_selected_tree_item_related_to_dialogue_engine(dialogue_engine_id):
 		# Highlight all the previosuly visited nodes in a specific color
 		for index : int in dialogue_entries_visited.size() - 1:
-			var graph_node_visited : StringName = dialogue_entries_visited[index]
+			var graph_node_visited : String = dialogue_entries_visited[index]
 			var graph_node : GraphNode = m_dialogue_engine_viewer_graph_edit.get_node_or_null(NodePath(graph_node_visited))
 			if is_instance_valid(graph_node):
 				var style_box_flat : StyleBoxFlat = graph_node.get_theme_stylebox(&"titlebar").duplicate(true)
@@ -248,7 +248,7 @@ func __update_graph_node_highlights_if_needed(p_dialogue_engine : DialogueEngine
 
 		# Highlight the last node visited as a different color to identify it from the rest
 		if not dialogue_entries_visited.is_empty():
-			var graph_node_visited : StringName = dialogue_entries_visited[-1]
+			var graph_node_visited : String = dialogue_entries_visited[-1]
 			var graph_node : GraphNode = m_dialogue_engine_viewer_graph_edit.get_node_or_null(NodePath(graph_node_visited))
 			if is_instance_valid(graph_node):
 				var style_box_flat : StyleBoxFlat = graph_node.get_theme_stylebox(&"titlebar").duplicate(true)
@@ -287,13 +287,13 @@ func __refresh_graph_for_currently_selected_item() -> void:
 		var dialogue_entry : DialogueEntry = dialogue_engine.get_entry_at(dialogue_entry_id)
 		var graph_node : GraphNode = m_base_dialogue_entry_graph_node_packed_scene.instantiate()
 
-		var dialogue_entry_id_as_string_name : StringName = StringName(dialogue_entry.get_id_as_text())
-		graph_node.set_name(dialogue_entry_id_as_string_name)
+		var dialogue_entry_id_as_string : String = dialogue_entry.get_id_as_text()
+		graph_node.set_name(dialogue_entry_id_as_string)
 		var title : String
 		if dialogue_entry.has_name():
-			title = dialogue_entry.get_name() + " ID: " + dialogue_entry_id_as_string_name
+			title = dialogue_entry.get_name() + " ID: " + dialogue_entry_id_as_string
 		else:
-			title = "DialogueEntry ID: " + dialogue_entry_id_as_string_name
+			title = "DialogueEntry ID: " + dialogue_entry_id_as_string
 		graph_node.set_title(title)
 
 		var branch_id_label : Label = graph_node.find_child("BranchIDLabel")
@@ -394,19 +394,19 @@ func __refresh_graph_for_currently_selected_item() -> void:
 		m_dialogue_engine_viewer_graph_edit.add_child(graph_node)
 
 	# Process GraphNode connections
-	var node_stringname_ids : Array = []
+	var node_string_ids : Array = []
 	for dialogue_entry_id : int in dialogue_engine.size():
 		var dialogue_entry : DialogueEntry = dialogue_engine.get_entry_at(dialogue_entry_id)
-		var dialogue_entry_id_as_string_name : StringName = StringName(dialogue_entry.get_id_as_text())
-		node_stringname_ids.push_back(dialogue_entry_id_as_string_name)
+		var dialogue_entry_id_as_string : String = dialogue_entry.get_id_as_text()
+		node_string_ids.push_back(dialogue_entry_id_as_string)
 
 		if dialogue_entry.has_goto():
 			var goto_dialogue_entry : DialogueEntry = dialogue_entry.get_goto_entry()
 
 			# Add connection
-			var from_node : StringName = dialogue_entry_id_as_string_name
+			var from_node : String = dialogue_entry_id_as_string
 			var from_port_in_connection_index_form : int = 0
-			var to_node : StringName = StringName(goto_dialogue_entry.get_id_as_text())
+			var to_node : String = goto_dialogue_entry.get_id_as_text()
 			var to_port : int = 0
 			var _success : int = m_dialogue_engine_viewer_graph_edit.connect_node(from_node, from_port_in_connection_index_form, to_node, to_port)
 		elif dialogue_entry.has_condition():
@@ -416,9 +416,9 @@ func __refresh_graph_for_currently_selected_item() -> void:
 			var true_goto_id : int = goto_ids[true]
 			if dialogue_engine.has_entry_at(true_goto_id):
 				var goto_dialogue_entry : DialogueEntry = dialogue_engine.get_entry_at(true_goto_id)
-				var from_node : StringName = dialogue_entry_id_as_string_name
+				var from_node : String = dialogue_entry_id_as_string
 				var from_port_in_connection_index_form : int = 0
-				var to_node : StringName = StringName(goto_dialogue_entry.get_id_as_text())
+				var to_node : String = goto_dialogue_entry.get_id_as_text()
 				var to_port : int = 0
 				var _success : int = m_dialogue_engine_viewer_graph_edit.connect_node(from_node, from_port_in_connection_index_form, to_node, to_port)
 
@@ -426,9 +426,9 @@ func __refresh_graph_for_currently_selected_item() -> void:
 			var false_goto_id : int = goto_ids[false]
 			if dialogue_engine.has_entry_at(false_goto_id):
 				var goto_dialogue_entry : DialogueEntry = dialogue_engine.get_entry_at(false_goto_id)
-				var from_node : StringName = dialogue_entry_id_as_string_name
+				var from_node : String = dialogue_entry_id_as_string
 				var from_port_in_connection_index_form : int = 1
-				var to_node : StringName = StringName(goto_dialogue_entry.get_id_as_text())
+				var to_node : String = goto_dialogue_entry.get_id_as_text()
 				var to_port : int = 0
 				var _success : int = m_dialogue_engine_viewer_graph_edit.connect_node(from_node, from_port_in_connection_index_form, to_node, to_port)
 		elif not dialogue_entry.has_options():
@@ -442,13 +442,13 @@ func __refresh_graph_for_currently_selected_item() -> void:
 					break
 			if is_instance_valid(goto_dialogue_entry):
 				# Enable slot
-				var dialogue_entry_graph_node : GraphNode = m_dialogue_engine_viewer_graph_edit.get_node(NodePath(dialogue_entry_id_as_string_name))
+				var dialogue_entry_graph_node : GraphNode = m_dialogue_engine_viewer_graph_edit.get_node(NodePath(dialogue_entry_id_as_string))
 				var from_port_in_connection_index_form : int = 0
 				dialogue_entry_graph_node.set_slot_enabled_right(from_port_in_connection_index_form, true)
 
 				# Add connection
-				var from_node : StringName = dialogue_entry_id_as_string_name
-				var to_node : StringName = StringName(goto_dialogue_entry.get_id_as_text())
+				var from_node : String = dialogue_entry_id_as_string
+				var to_node : String = goto_dialogue_entry.get_id_as_text()
 				var to_port : int = 0
 				var _success : int = m_dialogue_engine_viewer_graph_edit.connect_node(from_node, from_port_in_connection_index_form, to_node, to_port)
 		elif dialogue_entry.has_options():
@@ -458,9 +458,9 @@ func __refresh_graph_for_currently_selected_item() -> void:
 				if dialogue_engine.has_entry_at(option_goto_id):
 					# Add connection
 					var goto_dialogue_entry : DialogueEntry = dialogue_entry.get_option_goto_entry(option_id)
-					var from_node : StringName = dialogue_entry_id_as_string_name
+					var from_node : String = dialogue_entry_id_as_string
 					var from_port_in_connection_index_form : int = outgoing_port_number
-					var to_node : StringName = StringName(goto_dialogue_entry.get_id_as_text())
+					var to_node : String = goto_dialogue_entry.get_id_as_text()
 					var to_port : int = 0
 					var _success : int = m_dialogue_engine_viewer_graph_edit.connect_node(from_node, from_port_in_connection_index_form, to_node, to_port)
 					outgoing_port_number += 1
@@ -468,17 +468,10 @@ func __refresh_graph_for_currently_selected_item() -> void:
 
 	# Disable the first slot of all the nodes that have no incoming connections to make the graph more readable (this is purely for aesthetics)
 	var connections_list : Array = m_dialogue_engine_viewer_graph_edit.get_connection_list()
-	for target_node_name : StringName in node_stringname_ids:
+	for target_node_name : String in node_string_ids:
 		var found_incoming_connection_to_first_slot : bool = false
 		for connection_entry : Dictionary in connections_list:
-			# FUTURE TODO: Currently Dictionary does not support StringName as keys, but eventually it might -> https://github.com/godotengine/godot/pull/70096
-			# Finding a StringName is far quicker than matching a String due to how
-			# they are internally represented. StringName comparison turns into
-			# a single pointer comparison.
-			# There's a chance the connection_entry dictionary keys update to use StringName instead -- update this block to use StringName accordingly if the PR above is merged.
-			# Debug:
-			# print("Connections: ", connection_entry)
-			var to_node : StringName = connection_entry["to_node"]
+			var to_node : String = connection_entry["to_node"]
 			if to_node != target_node_name:
 				continue
 			var to_port : int = connection_entry["to_port"]
@@ -493,8 +486,6 @@ func __refresh_graph_for_currently_selected_item() -> void:
 	m_dialogue_engine_viewer_input_blocker_center_container.hide()
 
 	# Highlight the nodes
-	var dialogue_engine_id : int = dialogue_engine.get_meta(&"id")
-	var dialogue_entries_visited : Array = dialogue_engine.get_meta(&"dialogue_entries_visited", [])
 	__update_graph_node_highlights_if_needed(dialogue_engine)
 
 	# Finally auto arrange the nodes
