@@ -135,6 +135,16 @@ func get_current_entry() -> DialogueEntry:
 	return null
 
 
+## Sets the current dialogue entry if available.
+func set_current_entry(p_id : int) -> void:
+	if has_entry_at(p_id):
+		var dialogue_entry : DialogueEntry = get_entry_at(p_id)
+		_m_branch_id_needle = dialogue_entry.get_branch_id()
+		_m_read_needle = p_id
+	else:
+		push_warning("DialogueEngine: Attempting to set entry ID to '%d'")
+
+
 ## Returns the next available DialogueEntry. Returns null when the dialogue finishes.
 var _m_invalid_goto_detected : bool = false
 func advance(p_instant_finish : bool = false) -> void:
