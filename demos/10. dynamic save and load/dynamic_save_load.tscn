@@ -1,0 +1,84 @@
+[gd_scene load_steps=3 format=3 uid="uid://b0gsgxefiut4g"]
+
+[ext_resource type="Script" path="res://demos/10. dynamic save and load/dynamic_save_load.gd" id="1_75aob"]
+[ext_resource type="Script" path="res://demos/10. dynamic save and load/dynamic_save_dialogue.gd" id="2_lqhmn"]
+
+[node name="DynamicSaveLoad" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_75aob")
+dialogue_gdscript = ExtResource("2_lqhmn")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DialogueEngineDemoQuickStartPanelContainer" type="PanelContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="DialogueEngineDemoQuickStartLabel" type="Label" parent="VBox/DialogueEngineDemoQuickStartPanelContainer"]
+layout_mode = 2
+text = "Press <Enter> or <Space> to progress the dialogue."
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="Save" type="Button" parent="VBox/Buttons"]
+layout_mode = 2
+text = "Save and Quit"
+
+[node name="Clear" type="Button" parent="VBox/Buttons"]
+layout_mode = 2
+text = "Clear State and Quit"
+
+[node name="HistoryLog" type="Button" parent="VBox/Buttons"]
+layout_mode = 2
+toggle_mode = true
+text = "History Log"
+
+[node name="Dialogue" type="VBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="LogRichTextLabel" type="RichTextLabel" parent="VBox/Dialogue"]
+layout_mode = 2
+text = "Log:"
+fit_content = true
+
+[node name="History" type="CenterContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="History"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="History/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="HistoryLog" type="VBoxContainer" parent="History/Panel/Margin"]
+layout_mode = 2
+
+[node name="Animator" type="AnimationPlayer" parent="."]
+root_node = NodePath("../VBox")
+
+[connection signal="pressed" from="VBox/Buttons/Save" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="VBox/Buttons/Clear" to="." method="_on_clear_pressed"]
+[connection signal="toggled" from="VBox/Buttons/HistoryLog" to="." method="_on_history_log_toggled"]
