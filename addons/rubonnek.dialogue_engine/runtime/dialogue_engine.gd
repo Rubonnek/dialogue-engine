@@ -59,6 +59,8 @@ signal dialogue_started
 signal dialogue_continued(p_dialogue_entry : DialogueEntry)
 ## Emitted when [method DialogueEngine.advance] visits a [DialogueEntry].
 signal entry_visited(p_dialogue_entry : DialogueEntry)
+## Emitted when the dialogue is about to finish (i.e. when [method advance] is called and the internal read needle is at the last DialogueEntry).
+signal dialogue_about_to_finish
 ## Emitted when the dialogue finishes.
 signal dialogue_finished
 ## Emitted when reset() is called and DialogueEngine and the dialogue started but hasn't finished.
@@ -168,6 +170,9 @@ func advance(p_instant_finish : bool = false) -> void:
 	if not _m_has_dialogue_started:
 		_m_has_dialogue_started = true
 		dialogue_started.emit()
+
+	if _m_read_needle == _m_dialogue_tree.size():
+		dialogue_about_to_finish.emit()
 
 	if _m_invalid_goto_detected:
 		__reset_needles()
