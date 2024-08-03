@@ -1,13 +1,8 @@
 extends Control
 
 
-const SAVE_PATH : String = "user://save.dat"
-
 @export var dialogue_gdscript : GDScript = null
 var dialogue_engine : DialogueEngine = null
-var counter : int = 1
-
-var history_contents : PackedStringArray = []
 
 @onready var dialogue : VBoxContainer = $VBox/Dialogue
 @onready var history : CenterContainer = $History
@@ -21,8 +16,6 @@ func _ready() -> void:
 	dialogue_engine.dialogue_continued.connect(__on_dialogue_continued)
 	dialogue_engine.dialogue_finished.connect(__on_dialogue_finished)
 	dialogue_engine.dialogue_cancelled.connect(__on_dialogue_cancelled)
-	
-	load_state()
 
 
 func _input(p_input_event : InputEvent) -> void:
@@ -31,16 +24,10 @@ func _input(p_input_event : InputEvent) -> void:
 			# Player is inpatient -- auto-advance the text
 			var animation_name : StringName = animator.get_current_animation()
 			var animation : Animation = animator.get_animation(animation_name)
-			animator.advance(animation.get_length()) # this will fire the animation_finished signal automatically
+			animator.advance(animation.get_length()) # this will fire the animation_finished signal automatically else:
 		else:
-			# Increase counter and update entry
-			dialogue_engine.add_text_entry(str(counter))
-			counter += 1
-			
 			# Advance current entry
 			dialogue_engine.advance()
-			var current_entry: DialogueEntry = dialogue_engine.get_current_entry()
-			history_contents.push_back(current_entry.get_formatted_text())
 		accept_event() # accepting input event here to stop it from traversing into into buttons possibly added through the interaction
 
 
@@ -125,47 +112,29 @@ func create_visible_characters_animation_per_character(p_text : String, p_time_p
 	return animation
 
 
-func save_state() -> void:
-	var f: FileAccess = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
-	f.store_var(counter)
-	f.store_var(dialogue_engine.get_current_entry().get_id())
-	f.store_var(history_contents)
-	print("State Saved")
-
-
-func load_state() -> void:
-	if FileAccess.file_exists(SAVE_PATH):
-		var f: FileAccess = FileAccess.open(SAVE_PATH, FileAccess.READ)
-		counter = f.get_var()
-		# Fix: load value and cast to int to a void incompatible type warning
-		var entry_id: int = f.get_var()
-		dialogue_engine.set_current_entry(entry_id)
-		history_contents = f.get_var()
-		print("State Loaded")
-
-
-func _on_history_log_toggled(toggled_on: bool) -> void:
+func _on_history_log_toggled(p_should_be_visible : bool) -> void:
 	# Free all previous history labels
 	for child: Node in history_log.get_children():
 		child.queue_free()
-	
-	history.visible = toggled_on
-	
-	if toggled_on:
-		for text: String in history_contents:
+
+	history.visible = p_should_be_visible
+
+	if p_should_be_visible:
+		@warning_ignore("unsafe_method_access")
+		var log_history : Array = dialogue_engine.get_log_history()
+		for text : String in log_history:
 			var label: Label = Label.new()
 			label.text = text
 			history_log.add_child(label)
 
 
 func _on_save_pressed() -> void:
-	save_state()
+	@warning_ignore("unsafe_method_access")
+	dialogue_engine.save_state()
 	get_tree().quit()
 
 
 func _on_clear_pressed() -> void:
-	if FileAccess.file_exists(SAVE_PATH):
-		DirAccess.remove_absolute(SAVE_PATH)
-		print("Save Deleted")
-	
+	@warning_ignore("unsafe_method_access")
+	dialogue_engine.clear_state()
 	get_tree().quit()
