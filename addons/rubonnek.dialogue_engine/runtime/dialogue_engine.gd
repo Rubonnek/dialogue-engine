@@ -74,7 +74,7 @@ DEFAULT_BRANCH_ID = 0,
 var _m_dialogue_tree : Array[Dictionary] = []
 var _m_read_needle : int = 0
 var _m_branch_id_needle : int = DEFAULT_BRANCH_ID
-var _m_branch_id : int = DEFAULT_BRANCH_ID # used to let users choose the main branch this DialogueEngine will focus on
+var _m_has_dialogue_started : bool = false
 
 
 ## Adds a new text [DialogueEntry] to the engine and returns it.
@@ -109,22 +109,28 @@ func remove_entry_at(p_dialogue_entry_id : int) -> void:
 	_m_dialogue_tree.remove_at(p_dialogue_entry_id)
 
 
-## Sets the branch ID used for the first few [method advance] calls until a jump to a different branch ID is detected. This is also the value used to set the branch ID when [method reset] gets called.
+## Sets the branch ID used for the next [method advance] calls until a jump to a different branch ID is detected.
 func set_branch_id(p_branch_id : int) -> void:
-	_m_branch_id = p_branch_id
 	_m_branch_id_needle = p_branch_id
 	if EngineDebugger.is_active():
 		EngineDebugger.send_message("dialogue_engine:set_branch_id", [get_instance_id(), p_branch_id])
 
 
-## Returns the default branch ID used in the first few [method advance] calls before a jump to a different branch is detected.
-func get_branch_id() -> int:
-	return _m_branch_id
-
-
 ## Returns the currently tracked branch ID that is being read by [method advance] calls.
+func get_branch_id() -> int:
+	return _m_branch_id_needle
+
+
+## Returns the currently tracked branch ID that is being read by [method advance] calls. Same as [method get_branch_id].
 func get_branch_id_needle() -> int:
 	return _m_branch_id_needle
+
+
+## Returns the specified dialogue entry. Returns null if the dialogue entry does not exist.
+func get_entry(p_entry_id : int) -> DialogueEntry:
+	if has_entry_at(p_entry_id):
+		return get_entry_at(p_entry_id)
+	return null
 
 
 ## Returns the current dialogue entry. If the dialogue has not started or has been cancelled or finished, it will return null.
@@ -134,6 +140,13 @@ func get_current_entry() -> DialogueEntry:
 		return get_entry_at(current_dialogue_id)
 	return null
 
+## Returns the current dialogue entry ID. Returns -1 when no current entry can be found.
+func get_current_entry_id() -> int:
+	var current_dialogue_id : int = clampi(_m_read_needle - 1, 0, size())
+	if has_entry_at(current_dialogue_id):
+		return current_dialogue_id
+	return -1
+
 
 ## Sets the current dialogue entry if available.
 func set_current_entry(p_id : int) -> void:
@@ -142,7 +155,7 @@ func set_current_entry(p_id : int) -> void:
 		_m_branch_id_needle = dialogue_entry.get_branch_id()
 		_m_read_needle = p_id
 	else:
-		push_warning("DialogueEngine: Attempting to set entry ID to '%d'")
+		push_warning("DialogueEngine: Unable to set entry ID to '%d' since it's invalid." % p_id)
 
 
 ## Returns the next available DialogueEntry. Returns null when the dialogue finishes.
@@ -152,12 +165,13 @@ func advance(p_instant_finish : bool = false) -> void:
 		push_warning("DialogueEngine: Traversing dialogue on an empty tree!")
 		p_instant_finish = true # finish abruptly and as safely as possible
 
-	if _m_read_needle == 0:
+	if not _m_has_dialogue_started:
+		_m_has_dialogue_started = true
 		dialogue_started.emit()
 
 	if _m_invalid_goto_detected:
-		dialogue_cancelled.emit()
 		__reset_needles()
+		dialogue_cancelled.emit()
 
 	if p_instant_finish:
 		_m_read_needle = _m_dialogue_tree.size()
@@ -174,8 +188,8 @@ func advance(p_instant_finish : bool = false) -> void:
 				_m_branch_id_needle = target_dialogue_entry.get_branch_id()
 			else:
 				push_warning("DialogueEngine: Invalid condition goto for on entry ID '%d' found.\nCancelling dialogue." % [current_dialogue_entry.get_id()])
-				dialogue_cancelled.emit()
 				__reset_needles()
+				dialogue_cancelled.emit()
 				return
 		elif _m_read_needle != 0 and is_instance_valid(current_dialogue_entry) and current_dialogue_entry.has_options():
 			var chosen_option_id : int = current_dialogue_entry.get_chosen_option()
@@ -187,13 +201,13 @@ func advance(p_instant_finish : bool = false) -> void:
 					_m_branch_id_needle = target_dialogue_entry.get_branch_id()
 				else:
 					push_warning("DialogueEngine: Invalid option goto for option ID '%d' with text '%s'.\nAssociated DialogueEntry ID '%d' with text '%s'\nCancelling dialogue." % [option_goto_id, current_dialogue_entry.get_option_text(option_goto_id), current_dialogue_entry.get_id(), current_dialogue_entry.get_text()])
-					dialogue_cancelled.emit()
 					__reset_needles()
+					dialogue_cancelled.emit()
 					return
 			else:
 				push_warning("DialogueEngine: Invalid chosen option for option for DialogueEntry ID '%d' with text '%s'.\nCancelling dialogue." % [current_dialogue_entry.get_id(), current_dialogue_entry.get_text()])
-				dialogue_cancelled.emit()
 				__reset_needles()
+				dialogue_cancelled.emit()
 				return
 
 	for read_id : int in range(_m_read_needle, _m_dialogue_tree.size()):
@@ -237,26 +251,26 @@ func is_empty() -> bool:
 
 
 ## Replaces the [DialogueEntry] at the provided ID.
-func set_entry_at(p_dialogue_id : int, p_dialogue_entry : DialogueEntry) -> void:
-	_m_dialogue_tree[p_dialogue_id] = p_dialogue_entry.get_data()
+func set_entry_at(p_entry_id : int, p_dialogue_entry : DialogueEntry) -> void:
+	_m_dialogue_tree[p_entry_id] = p_dialogue_entry.get_data()
 
 
 ## Returns the [DialogueEntry] at the provided ID. Returns [code]null[/code] when the ID is invalid.
-func get_entry_at(p_dialogue_id : int) -> DialogueEntry:
-	if not has_entry_at(p_dialogue_id):
-		push_warning("DialogueEngine: Attempted to return entry with invalid ID \"%d\"." % p_dialogue_id)
+func get_entry_at(p_entry_id : int) -> DialogueEntry:
+	if not has_entry_at(p_entry_id):
+		push_warning("DialogueEngine: Attempted to return entry with invalid ID \"%d\"." % p_entry_id)
 		return null
-	var target_dialogue_entry_dictionary : Dictionary = _m_dialogue_tree[p_dialogue_id]
-	return DialogueEntry.new(p_dialogue_id, self, target_dialogue_entry_dictionary)
+	var target_dialogue_entry_dictionary : Dictionary = _m_dialogue_tree[p_entry_id]
+	return DialogueEntry.new(p_entry_id, self, target_dialogue_entry_dictionary)
 
 
 ## Returns true if a [DialogueEntry] ID is available.
-func has_entry_at(p_dialogue_id : int) -> bool:
-	return p_dialogue_id >= 0 and p_dialogue_id < _m_dialogue_tree.size()
+func has_entry_at(p_entry_id : int) -> bool:
+	return p_entry_id >= 0 and p_entry_id < _m_dialogue_tree.size()
 
 
 ## Returns the [DialogueEntry] at the provided ID.
-func get_entry_with_name(p_dialogue_entry_name : StringName) -> DialogueEntry:
+func get_entry_with_name(p_dialogue_entry_name : String) -> DialogueEntry:
 	if p_dialogue_entry_name == &"":
 		push_warning("DialogueEngine: Attempted to return entry with empty name." % p_dialogue_entry_name)
 		return null
@@ -300,7 +314,8 @@ func clear() -> void:
 # Resets the needles used when advancing the dialogue.
 func __reset_needles() -> void:
 	_m_read_needle = 0
-	_m_branch_id_needle = _m_branch_id
+	_m_branch_id_needle = 0
+	_m_has_dialogue_started = false
 	_m_invalid_goto_detected = false
 
 

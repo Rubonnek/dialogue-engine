@@ -312,7 +312,7 @@ func is_options_empty() -> bool:
 
 
 ## Sets the text for the dialogue entry.
-func set_name(p_dialogue_entry_name : StringName) -> void:
+func set_name(p_dialogue_entry_name : String) -> void:
 	if p_dialogue_entry_name.is_empty():
 		if _m_dialogue_entry_dictionary.has(_key.NAME):
 			var _ignore : int = _m_dialogue_entry_dictionary.erase(_key.NAME)
@@ -425,7 +425,7 @@ func set_goto_id(p_goto_id : int) -> void:
 	__send_entry_to_engine_viewer()
 
 
-## Returns the goto dialogue entry if any. Returns null when no goto is available. A default goto is calculated in [method DialogueEngine.advance] by default and it's calculated to be the next dialogue entry on the same branch as [method DialogueEngine.get_branch_id_needle].
+## Returns the goto dialogue entry if any. Returns null when no goto is available. A default goto is calculated in [method DialogueEngine.advance] by default and it's calculated to be the next dialogue entry on the same branch as [method DialogueEngine.get_branch_id].
 func get_goto_entry() -> DialogueEntry:
 	if _m_dialogue_entry_dictionary.has(_key.GOTO):
 		var goto_id : int = _m_dialogue_entry_dictionary[_key.GOTO]
@@ -443,7 +443,7 @@ func get_goto_id() -> int:
 	return _m_dialogue_entry_dictionary.get(_key.GOTO, GOTO_DEFAULT)
 
 
-## Returns the goto dialogue entry if any. Returns null when no goto is available. A default goto is calculated in [method DialogueEngine.advance] by default and it's calculated to be the next dialogue entry on the same branch as [method DialogueEngine.get_branch_id_needle].
+## Returns the goto dialogue entry if any. Returns null when no goto is available. A default goto is calculated in [method DialogueEngine.advance] by default and it's calculated to be the next dialogue entry on the same branch as [method DialogueEngine.get_branch_id].
 func remove_goto() -> void:
 	if _m_dialogue_entry_dictionary.has(_key.GOTO):
 		var _ignore : bool = _m_dialogue_entry_dictionary.erase(_key.GOTO)
