@@ -3,9 +3,9 @@ extends DialogueEngine
 
 enum {
 DEFAULT_TOPIC = 0, # this is the branch used by default unless set_branch_id() is used
-WAIT_TO_FINISH = 1,
-GO_BACK_TO_SLEEP = 2,
-KEEP_WORKING = 3
+WATCH_THE_STORM,
+GO_BACK_TO_SLEEP,
+KEEP_WORKING,
 }
 
 
@@ -18,27 +18,20 @@ func _setup() -> void:
 	entry.set_metadata("dont_show_options", [option_id_4])
 	entry.set_metadata("auto_choose", option_id_4)
 
-	var option_id_1_entry : DialogueEntry = add_text_entry("", WAIT_TO_FINISH)
-	entry.set_option_goto_id(option_id_1, option_id_1_entry.get_id())
-
 	var option_id_2_entry : DialogueEntry = add_text_entry("That's right, sleep is for the strong 💪.", GO_BACK_TO_SLEEP)
 	entry.set_option_goto_id(option_id_2, option_id_2_entry.get_id())
 
 	var option_id_3_entry : DialogueEntry = add_text_entry("That's right, let's get back to work 🫡", KEEP_WORKING)
 	entry.set_option_goto_id(option_id_3, option_id_3_entry.get_id())
 
-	var option_id_4_entry : DialogueEntry = add_text_entry("I think I'll enjoy watching the storm for a bit...", KEEP_WORKING)
+	var option_id_4_entry : DialogueEntry = add_text_entry("I think I'll enjoy watching the storm for a bit...", WATCH_THE_STORM)
 	entry.set_option_goto_id(option_id_4, option_id_4_entry.get_id())
 
 	# Join branches into the default topic (i.e. branch id 0)
 	var default_topic : DialogueEntry = add_text_entry("Some time passes...")
-	option_id_1_entry.set_goto_id(default_topic.get_id())
+	entry.set_option_goto_id(option_id_1, default_topic.get_id())
 	option_id_2_entry.set_goto_id(default_topic.get_id())
 	option_id_3_entry.set_goto_id(default_topic.get_id())
-
-	# None of the following entries will be connected on the graph and won't be shown when advancing the dialogue
-	add_text_entry("A wait entry skipped due to missing goto against this entry.", WAIT_TO_FINISH)
-	add_text_entry("A sleep entry skipped due to missing goto against this entry.", GO_BACK_TO_SLEEP)
-	add_text_entry("A working entry due to missing goto against this entry.", KEEP_WORKING)
+	option_id_4_entry.set_goto_id(default_topic.get_id())
 
 	add_text_entry("<Press 'Space' or 'Enter' to quit>")
