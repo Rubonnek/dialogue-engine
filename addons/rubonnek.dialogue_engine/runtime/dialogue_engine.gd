@@ -77,6 +77,7 @@ var _m_dialogue_tree : Array[Dictionary] = []
 var _m_read_needle : int = 0
 var _m_branch_id_needle : int = DEFAULT_BRANCH_ID
 var _m_has_dialogue_started : bool = false
+var _m_invalid_goto_detected : bool = false
 
 
 ## Adds a new text [DialogueEntry] to the engine and returns it.
@@ -160,8 +161,7 @@ func set_current_entry(p_id : int) -> void:
 		push_warning("DialogueEngine: Unable to set entry ID to '%d' since it's invalid." % p_id)
 
 
-## Returns the next available DialogueEntry. Returns null when the dialogue finishes.
-var _m_invalid_goto_detected : bool = false
+## Advances the dialogue and emits the next [DialogueEntry] with text data through the [signal dialogue_continued] signal. Entries with conditional data are emitted through the [signal entry_visited] signal.
 func advance(p_instant_finish : bool = false) -> void:
 	if _m_dialogue_tree.is_empty():
 		push_warning("DialogueEngine: Traversing dialogue on an empty tree!")
