@@ -291,7 +291,7 @@ func __refresh_graph_for_currently_selected_item() -> void:
 		graph_node.set_name(dialogue_entry_id_as_string)
 		var title : String
 		if dialogue_entry.has_name():
-			title = dialogue_entry.get_name() + " ID: " + dialogue_entry_id_as_string
+			title = dialogue_entry.get_name() + " - ID: " + dialogue_entry_id_as_string
 		else:
 			title = "DialogueEntry ID: " + dialogue_entry_id_as_string
 		graph_node.set_title(title)
