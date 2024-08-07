@@ -28,42 +28,48 @@
 #============================================================================
 
 extends RefCounted
-## A minimalistic, yet flexible, dialogue engine.
+## A minimalistic dialogue engine that fits into your GUI nodes and automatically graphs the branching dialogues for easy debugging.
 ##
-## DialogueEngine provides a flexible API to support dialogues of [i]any[/i] kind.[br]
+## DialogueEngine provides an API for creating dialogue trees and walking them, and the user is responsible for providing the GUI code that presents the text to the player.
+## The engine internally manages an array of dictionaries each of which are accessed as a [DialogueEntry] which are the basic repsentation of the entries within dialogue tree.
 ## [br]
-## The engine internally manages an array of dictionaries each of which are accessed as a [DialogueEntry] which are the basic repsentation of the entries within dialogue. The only role of the engine is to traverse each [DialogueEntry], it is up to the user to display these events in a way they see fit as they call [method DialogueEngine.advance]. Each [DialogueEntry] can be added either through [method DialogueEngine.add_text_entry] or [method DialogueEngine.push_back].[br]
 ## [br]
-## Each [DialogueEntry] contains all the data needed to process a block of text from the dialogue: a branch ID, a boolean callback for determining whether the dialogue text should be displayed, and the text of the dialogue itself.
+## Each [DialogueEntry] can be of two types: text or conditional. Text-based entries represent a block of text to be shown in the dialog along with possible options the player can choose. Conditional-based entries represent a bifurcation point in the dialogue tree the path of which is dictated by a user-supplied boolean [Callable].
+## Each type of [DialogueEntry] can be added either through [method add_text_entry] or [method add_conditional_entry].
 ## [br]
 ## [br]
 ## [b]Quickstart[/b]:
 ## [codeblock]
 ## var dialogue_engine : DialogueEngine = DialogueEngine.new()
-## var branch_id : int = DialogueEngine.DEFAULT_BRANCH_ID
 ## dialogue_engine.add_text_entry("Hello")
 ##
-## print(dialogue_engine.advance().get_text()) # prints "Hello"
-## print(dialogue_engine.advance()) # null object -- end of dialogue
-## print(dialogue_engine.advance().get_text()) # prints "Hello" again
-## print(dialogue_engine.advance()) # null
+## var print_dialogue : Callable = func (dialogue_entry ; DialogueEntry) -> void:
+##     print(dialogue_entry.get_text())
+##
+## dialogue_engine.dialogue_continued.connect(print_dialogue)
+##
+## dialogue_engine.advance() # prints "Hello"
+## dialogue_engine.advance() # Nothing prints -- the dialogue finished.
+## dialogue_engine.advance() # prints "Hello"
+## dialogue_engine.advance() # Nothing prints -- the dialogue finished.
 ## [/codeblock]
 ## [br]
-# Implementation Note: Internally every DialogueEntry is represented by a dictionary internally to avoid a permanent circular dependency (DialogueEngine <-> DialogueEntry) which in turn could leak memory.
+##
+## @tutorial(Demos): https://github.com/Rubonnek/dialogue-engine/tree/master/demos
 class_name DialogueEngine
 
 
 ## Emitted when the first [DialogueEntry] is read
 signal dialogue_started
-## Emitted when [method DialogueEngine.advance] stops at a [DialogueEntry] that has text.
+## Emitted when [method advance] visits a [DialogueEntry] that has text.
 signal dialogue_continued(p_dialogue_entry : DialogueEntry)
-## Emitted when [method DialogueEngine.advance] visits a [DialogueEntry].
+## Emitted when [method advance] visits a [DialogueEntry] that either has text or has a condition.
 signal entry_visited(p_dialogue_entry : DialogueEntry)
 ## Emitted when the dialogue is about to finish (i.e. when [method advance] is called and the internal read needle is at the last DialogueEntry).
 signal dialogue_about_to_finish
 ## Emitted when the dialogue finishes.
 signal dialogue_finished
-## Emitted when reset() is called and DialogueEngine and the dialogue started but hasn't finished.
+## Emitted when reset() is called and the dialogue started but hasn't finished, or an invalid goto or chosen option has been encountered.
 signal dialogue_cancelled
 
 
@@ -102,7 +108,7 @@ func add_conditional_entry(p_callable : Callable, p_branch_id : int = DEFAULT_BR
 	return dialogue_entry
 
 
-## Sets the branch ID used for the next [method advance] calls until a jump to a different branch ID is detected.
+## Sets the branch ID used for the next [method advance] calls. Useful when initializing the engine. This function is called automatically by [method advance] when a jump (i.e. a goto) to a different branch ID is detected.
 func set_branch_id(p_branch_id : int) -> void:
 	_m_branch_id_needle = p_branch_id
 	if EngineDebugger.is_active():
@@ -121,12 +127,13 @@ func get_entry(p_entry_id : int) -> DialogueEntry:
 	return null
 
 
-## Returns the current dialogue entry. If the dialogue has not started or has been cancelled or finished, it will return null.
+## Returns the current dialogue entry. If there's no available entry or the dialogue has not started or has been cancelled or finished, it will return null.
 func get_current_entry() -> DialogueEntry:
 	var current_dialogue_id : int = clampi(_m_read_needle - 1, 0, size())
 	if has_entry_at(current_dialogue_id):
 		return get_entry_at(current_dialogue_id)
 	return null
+
 
 ## Returns the current dialogue entry ID. Returns -1 when no current entry can be found.
 func get_current_entry_id() -> int:
@@ -230,12 +237,12 @@ func advance(p_instant_finish : bool = false) -> void:
 	return
 
 
-## Returns the number [DialogueEntry] members associated with the [DialogueEngine] instance.
+## Returns the number of dialogue tree entries stored.
 func size() -> int:
 	return _m_dialogue_tree.size()
 
 
-## Returns true if the [DialogueEngine] has at least [DialogueEntry] in it.
+## Returns true if no dialogue tree entry is stored.
 func is_empty() -> bool:
 	return _m_dialogue_tree.is_empty()
 
@@ -259,7 +266,7 @@ func has_entry_at(p_entry_id : int) -> bool:
 	return p_entry_id >= 0 and p_entry_id < _m_dialogue_tree.size()
 
 
-## Returns the [DialogueEntry] at the provided ID.
+## Returns the [DialogueEntry] with the provided name. See [method DialogueEntry.set_name].
 func get_entry_with_name(p_dialogue_entry_name : String) -> DialogueEntry:
 	if p_dialogue_entry_name == &"":
 		push_warning("DialogueEngine: Attempted to return entry with empty name." % p_dialogue_entry_name)
@@ -273,7 +280,7 @@ func get_entry_with_name(p_dialogue_entry_name : String) -> DialogueEntry:
 	return null
 
 
-## Injects the [DialogueEntry] at the end of the chain of its current branch.
+## Injects the [DialogueEntry] at the end of the chain of its current branch. This function is mostly used for internal purposes. Prefer using [method add_text_entry] or [method add_conditional_entry] instead.
 func push_back(p_dialogue_entry : DialogueEntry) -> void:
 	var write_needle : int = _m_dialogue_tree.size()
 	_m_dialogue_tree.push_back(p_dialogue_entry.get_data())
@@ -374,6 +381,7 @@ func _init() -> void:
 	# Execute the "pure virtual" call -- users may (or may not) use this call to setup their dialogue
 	_setup()
 
-## Pseudo-virtual function. Callen when [code]DialogueEngine._init()[/code] finishes. Can be used to setup your dialogue when extending [DialogueEngine].
+
+## Pseudo-virtual function. Called when [method DialogueEngine._init] finishes, useful when extending [DialogueEngine].
 func _setup() -> void:
 	pass

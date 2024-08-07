@@ -30,14 +30,16 @@
 extends RefCounted
 class_name DialogueEntry
 
-## Basic representation of one piece of dialogue.
+## Basic representation of a node in a dialogue tree managed by [DialogueEngine].
 ##
-## Each dialogue entry is composed of:[br]
+## Each [DialogueEntry] represents a node in a dialogue tree and are composed of:[br]
 ## [br]
-## 	1. An ID that uniquely identifies the dialogue entry within the DialogueEngine. Internally this ID is the same as the array index where the dialogue entry is stored at within the [DialogueEngine].
-## 	2. The text of the dialogue that might take place under the right condition, and[br]
-## 	3. Multiple possible options for a response
-## 	4. Custom metadata associated with the dialogue entry. For example the actor's name, their emotional state, a pre dialogue callback or post dialogue callback, or any other sort of metadata useful for displaying the progress of the dialogue[br]
+## 1. An entry ID that uniquely identifies the entry within the dialogue tree.[br]
+## 2. A branch ID that uniquely identifies the branch the entry belongs within the dialogue tree.[br]
+## 3. The dialogue text and possible response options OR a boolean [Callable] that represents a conditional bifurcation in the dialogue tree.[br]
+## 4. And custom metadata that can be used as a convention to trigger events in the graphical representation of the dialogue such as the actor's name, the actor's emotional state, etc.
+##
+## @tutorial(Demos): https://github.com/Rubonnek/dialogue-engine/tree/master/demos
 
 var _m_dialogue_entry_dictionary : Dictionary = {}
 var _m_dialogue_entry_dictionary_id : int = 0
@@ -51,7 +53,7 @@ GOTO_DEFAULT = -1,
 INVALID_CONDITION_GOTO = -2,
 ## Default option goto when an option is added but not configured.
 INVALID_OPTION_GOTO = -2,
-## Invalid option chosen.
+## Default chosen goto when an invalid option is chosen.
 INVALID_CHOSEN_OPTION = -2,
 ## Makes [method get_formatted_text] return the text as-is with no error. See [method set_format].
 FORMAT_NONE = 1,
@@ -100,7 +102,7 @@ func get_text() -> String:
 	return text
 
 
-## Returns the text with the given text format data apply if previously given through [method set_format].
+## Returns the text with the given format data applied. See [method set_format].
 func get_formatted_text() -> String:
 	var text : String = get_text()
 	var format_variant : Variant = get_evaluated_format()
@@ -121,6 +123,11 @@ func get_formatted_text() -> String:
 			return text
 	push_error("DialogueEntry: No format operation was identified. This should not happen.")
 	return text
+
+
+## Returns true if the dialogue entry has text.
+func has_text() -> bool:
+	return _m_dialogue_entry_dictionary.has(_key.TEXT)
 
 
 ## Returns a copy of the format data where all the [Callable] getters are called and substituted with their return values.
@@ -178,11 +185,6 @@ func __evaluate_callables_in_dictionary(p_dictionary : Dictionary) -> Array:
 	return pending_queue
 
 
-## Returns true if the dialogue entry has text.
-func has_text() -> bool:
-	return _m_dialogue_entry_dictionary.has(_key.TEXT)
-
-
 ## Adds an option to the dialogue entry and returns its option id.
 func add_option(p_text : String) -> int:
 	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
@@ -191,7 +193,7 @@ func add_option(p_text : String) -> int:
 	if not _m_dialogue_entry_dictionary.has(_key.OPTIONS):
 		_m_dialogue_entry_dictionary[_key.OPTIONS] = options_array
 	if has_condition():
-		push_warning("DialogueEntry: An option was added to entry with ID '%d' but this same entry has a condition installed. The option will be ignored if the condition isn't removed.\nThe associated text of the first option is:\n\n\t\"%s\"" % [_m_dialogue_entry_dictionary_id, get_option_text(0)])
+		push_warning("DialogueEntry: An option was added to DialogueEntry ID '%d' but this same entry has a condition installed. The added option will be ignored if the condition isn't removed.\nThe associated text of the option is:\n\n\t\"%s\"" % [_m_dialogue_entry_dictionary_id, p_text])
 	__send_entry_to_engine_viewer()
 	return option_id
 
@@ -212,7 +214,7 @@ func get_option_text(p_option_id : int) -> String:
 	return text
 
 
-## Sets the option goto entry
+## Sets the option goto entry id
 func set_option_goto_id(p_option_id : int, p_goto_id : int) -> void:
 	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
 	var target_option : Dictionary = options_array[p_option_id]
@@ -226,7 +228,7 @@ func set_option_goto_id(p_option_id : int, p_goto_id : int) -> void:
 	__send_entry_to_engine_viewer()
 
 
-## Returns the option goto ID stored at the specified option id.
+## Returns the option goto id stored at the specified option id. Returns [enum INVALID_OPTION_GOTO] when invalid.
 func get_option_goto_id(p_option_id : int) -> int:
 	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
 	var target_option : Dictionary = options_array[p_option_id]
@@ -245,20 +247,22 @@ func get_option_goto_entry(p_option_id : int) -> DialogueEntry:
 		return dialogue_entry
 
 
-## Attaches a condition. Useful for branching dialogues when certain conditions must be met. If the dialogue entry has options, these will get ignored.
+## Attaches a condition to the entry. Useful for branching dialogues when certain conditions must be met. Consider using [method DialogueEngine.add_conditional_entry] instead.[br]
+## [br]
+## [color=yellow]Warning:[/color] This function will convert a text-based DialogueEntry to a conditional one, meaning that its goto and options will be ignored
 func set_condition(p_callable : Callable) -> void:
 	# NOTE: No need to check if p_callable is null since an error will be generated automatically at runtime.
 	_m_dialogue_entry_dictionary[_key.CONDITION] = p_callable
 	if has_text():
-		push_warning("DialogueEntry: A condition was set on entry with ID '%d' but this same entry has text installed. The text will be ignored if the condition isn't removed.\nThe associated text is:\n\n\t\"%s\"" % [_m_dialogue_entry_dictionary_id, get_text()])
+		push_warning("DialogueEntry: A condition was set on entry with ID '%d' but this same entry has text installed. During a DialogueEngine.advance() call, this instance won't be emitted through dialogue_continued signal.\nThe associated DialogueEntry text is:\n\n\t\"%s\"" % [_m_dialogue_entry_dictionary_id, get_text()])
 	if has_goto():
-		push_warning("DialogueEntry: A condition was set on entry with ID '%d' but this same entry has a goto installed. The goto will be ignored if the condition isn't removed." % [_m_dialogue_entry_dictionary_id, get_text()])
+		push_warning("DialogueEntry: A condition was set on entry with ID '%d' but this same entry has a goto installed. The goto will be ignored if the condition isn't removed." % [_m_dialogue_entry_dictionary_id])
 	if has_options():
 		push_warning("DialogueEntry: A condition was set on entry with ID '%d' but this same entry has options installed. The options will be ignored if the condition isn't removed.\nThe associated text of the first option is:\n\n\t\"%s\"" % [_m_dialogue_entry_dictionary_id, get_option_text(0)])
 	__send_entry_to_engine_viewer()
 
 
-## Get condition:
+## Returns the condition [Callable].
 func get_condition() -> Callable:
 	return _m_dialogue_entry_dictionary.get(_key.CONDITION, Callable())
 
@@ -279,7 +283,7 @@ func get_condition_goto_ids() -> Dictionary:
 	return _m_dialogue_entry_dictionary.get(_key.CONDITION_GOTOS, { true : INVALID_CONDITION_GOTO, false : INVALID_CONDITION_GOTO})
 
 
-## Removes the condition>
+## Removes the condition and converts the conditional-based DialogueEntry into a text-based one unless [method set_condition] is called again.
 func remove_condition() -> void:
 	if _m_dialogue_entry_dictionary.has(_key.CONDITION):
 		var _ignore : bool = _m_dialogue_entry_dictionary.erase(_key.CONDITION)
@@ -311,7 +315,7 @@ func is_options_empty() -> bool:
 	return options_array.is_empty()
 
 
-## Sets the text for the dialogue entry.
+## Sets the name of the [DialogueEntry]. Useful for viewing it on the debugger or finding the entry through [method DialogueEngine.get_entry_with_name].
 func set_name(p_dialogue_entry_name : String) -> void:
 	if p_dialogue_entry_name.is_empty():
 		if _m_dialogue_entry_dictionary.has(_key.NAME):
@@ -319,7 +323,7 @@ func set_name(p_dialogue_entry_name : String) -> void:
 	else:
 		_m_dialogue_entry_dictionary[_key.NAME] = p_dialogue_entry_name
 
-	# Do a sanity check:
+	# Do a uniqueness sanity check -- this is to warn the user that DialogueEngine.get_entry_with_name is consistent and works as expected:
 	if OS.is_debug_build():
 		if not p_dialogue_entry_name.is_empty():
 			for entry_id : int in _m_dialogue_engine.size():
@@ -330,13 +334,13 @@ func set_name(p_dialogue_entry_name : String) -> void:
 	__send_entry_to_engine_viewer()
 
 
-## Returns the text of the dialogue entry.
+## Returns the name of the dialogue entry. Returns an empty string if no name was set.
 func get_name() -> String:
 	var name : String = _m_dialogue_entry_dictionary.get(_key.NAME, "")
 	return name
 
 
-## Returns the text of the dialogue entry.
+## Returns the true if the dialogue entry has a name.
 func has_name() -> bool:
 	return _m_dialogue_entry_dictionary.has(_key.NAME)
 
@@ -359,24 +363,24 @@ func set_format(p_format_data : Variant, p_format_operation_id : int) -> void:
 	__send_entry_to_engine_viewer()
 
 
-## Returns the format specified in [method set_format] as a Dictionary with keys [code]format_data[/code] and [code]format_operation_id[/code].
+## Returns the format specified in [method set_format] as a Dictionary with keys [code]format_data[/code] and [code]format_operation_id[/code]. Returns an empty dictionary when no format data nor format operation has been previously specified.
 func get_format() -> Dictionary:
 	var format_dictionary : Dictionary = _m_dialogue_entry_dictionary.get(_key.FORMAT, {})
 	return format_dictionary
 
 
-## Returns true if a format dictionary or array is installed.
+## Returns true if [method set_format] has been called previously against this DialogueEntry instance and the formatting data and format operation id has been stored successfully.
 func has_format() -> bool:
 	return _m_dialogue_entry_dictionary.has(_key.FORMAT)
 
 
-## Sets the text for the dialogue entry.
+## Removes the format data and format operation id if any.
 func remove_text_vars() -> void:
 	if _m_dialogue_entry_dictionary.has(_key.FORMAT):
 		var _ignore : bool = _m_dialogue_entry_dictionary.erase(_key.FORMAT)
 
 
-## Sets option to be processed by the next [method DialogueEngine.advance] call.
+## Sets option id to be processed by [method DialogueEngine.advance] call when processing the option chosen for the entry. The option id is given by [method add_option].
 func choose_option(p_option_id : int) -> void:
 	_m_dialogue_entry_dictionary[_key.CHOSEN_OPTION] = p_option_id
 
@@ -411,8 +415,9 @@ func remove_option_at(p_option_id : int) -> void:
 	__send_entry_to_engine_viewer()
 
 
-## Attaches a top-level goto dialogue entry which gets processed when no options are present and the dialogue entry was visited by [method DialgoueEngine.advance] call.[br]
-## If the goto [DialogueEntry] has a different branch ID, the [DialogueEngine] branch needle will be updated to the specified goto [DialogueEntry] upon the next [method DialogueEngine.advance] call.
+## Attaches a top-level goto dialogue entry which gets processed when no options are present and the dialogue entry was visited by [method DialgoueEngine.advance] call.
+## If the goto [DialogueEntry] has a different branch ID, then [method DialogueEngine.set_branch_id] will be called automatically to match the specified branch ID at the target [DialogueEntry] upon the next [method DialogueEngine.advance] call.[br]
+## When the goto is not provided, [method DialogueEngine.advance] will search for the next dialogue entry on the same branch ID as [method DialogueEngine.get_branch_id].
 func set_goto_id(p_goto_id : int) -> void:
 	if _m_dialogue_engine.has_entry_at(p_goto_id):
 		_m_dialogue_entry_dictionary[_key.GOTO] = p_goto_id
@@ -425,7 +430,7 @@ func set_goto_id(p_goto_id : int) -> void:
 	__send_entry_to_engine_viewer()
 
 
-## Returns the goto dialogue entry if any. Returns null when no goto is available. A default goto is calculated in [method DialogueEngine.advance] by default and it's calculated to be the next dialogue entry on the same branch as [method DialogueEngine.get_branch_id].
+## Returns the goto dialogue entry. Returns null when the goto is invalid.
 func get_goto_entry() -> DialogueEntry:
 	if _m_dialogue_entry_dictionary.has(_key.GOTO):
 		var goto_id : int = _m_dialogue_entry_dictionary[_key.GOTO]
@@ -438,12 +443,12 @@ func get_goto_entry() -> DialogueEntry:
 		return null
 
 
-## Returns the goto dialogue ID.
+## Returns the goto dialogue entry ID.
 func get_goto_id() -> int:
 	return _m_dialogue_entry_dictionary.get(_key.GOTO, GOTO_DEFAULT)
 
 
-## Returns the goto dialogue entry if any. Returns null when no goto is available. A default goto is calculated in [method DialogueEngine.advance] by default and it's calculated to be the next dialogue entry on the same branch as [method DialogueEngine.get_branch_id].
+## Removes the goto ID. A default goto is calculated in [method DialogueEngine.advance] by default and it's calculated to be the next dialogue entry on the same branch as [method DialogueEngine.get_branch_id].
 func remove_goto() -> void:
 	if _m_dialogue_entry_dictionary.has(_key.GOTO):
 		var _ignore : bool = _m_dialogue_entry_dictionary.erase(_key.GOTO)
@@ -475,7 +480,7 @@ func has_metadata(p_key : Variant) -> Variant:
 	return metadata.has(p_key)
 
 
-## Directly returns the internal metadata dictionary.
+## Returns a reference to the internal metadata dictionary.
 func get_metadata_data() -> Dictionary:
 	var metadata : Dictionary = _m_dialogue_entry_dictionary.get(_key.METADATA, {})
 	if metadata.is_empty():
@@ -485,7 +490,7 @@ func get_metadata_data() -> Dictionary:
 	return metadata
 
 
-## Directly updates the internal metadata dictionary with [p_metadata].
+## Directly sets the internal metadata dictionary. Useful when a dialogue entry must share the same metadata with other entries.
 func set_metadata_data(p_metadata : Dictionary) -> void:
 	if p_metadata.is_empty():
 		if _m_dialogue_entry_dictionary.has(_key.METADATA):
@@ -551,13 +556,14 @@ func get_engine() -> DialogueEngine:
 ## Sets the associated dialogue entry data.
 func set_data(p_data : Dictionary) -> void:
 	# The new data may not cover all the keys we currently have.
-	# For this reason we clear all the current data before merging.
+	# And the provided dictionary may not be attached to the current DialogueEngine.
+	# For these reasons we clear all the current data before merging.
 	_m_dialogue_entry_dictionary.clear()
 	_m_dialogue_entry_dictionary.merge(p_data, true)
 	__send_entry_to_engine_viewer()
 
 
-## Returns the dialogue entry data.
+## Returns a reference to the internal dialogue entry data.
 func get_data() -> Dictionary:
 	return _m_dialogue_entry_dictionary
 
@@ -597,6 +603,7 @@ func __send_entry_to_engine_viewer() -> void:
 		EngineDebugger.send_message("dialogue_engine:sync_entry", [dialogue_engine_id, _m_dialogue_entry_dictionary_id, duplicated_dialogue_entry_data])
 
 
+# Stringifies the format operation ID so we can display it in the debugger.
 func __stringify_format_operation_id(p_format_operation_id : int) -> String:
 	match p_format_operation_id:
 		FORMAT_NONE:
@@ -611,7 +618,7 @@ func __stringify_format_operation_id(p_format_operation_id : int) -> String:
 	return "FORMAT_INVALID"
 
 
-## Returns a copy of the format data where all the [Callable] getters are called and substituted with their return values.
+# Returns a copy of the format data where all the [Callable] getters are called and substituted with their return values in a stringified format used for debugging purposes.
 func __get_stringified_format() -> Variant:
 	var format_dictionary : Dictionary = get_format()
 	var format_variant : Variant = format_dictionary.get(_key.FORMAT_DATA, [])
