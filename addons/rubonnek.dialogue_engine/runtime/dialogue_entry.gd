@@ -30,14 +30,15 @@
 extends RefCounted
 class_name DialogueEntry
 
-## Basic representation of one piece of dialogue.
+## Basic representation of a node in a dialogue tree managed by [DialogueEngine].
 ##
-## Each dialogue entry is composed of:[br]
+## Each DialogueEntry represents a node in a dialogue tree and they are composed of:[br]
 ## [br]
-## 	1. An ID that uniquely identifies the dialogue entry within the DialogueEngine. Internally this ID is the same as the array index where the dialogue entry is stored at within the [DialogueEngine].
-## 	2. The text of the dialogue that might take place under the right condition, and[br]
-## 	3. Multiple possible options for a response
-## 	4. Custom metadata associated with the dialogue entry. For example the actor's name, their emotional state, a pre dialogue callback or post dialogue callback, or any other sort of metadata useful for displaying the progress of the dialogue[br]
+## 1. An ID that uniquely identifies the entry within the [DialogueEngine].[br]
+## 2. The dialogue text and possible response options OR a boolean [Callable] that represents a conditional bifurcation in the dialogue tree.[br]
+## 3. Custom metadata that can be used as a convention to trigger events in the graphical representation of the dialogue such as the actor's name, the actor's emotional state, etc.
+##
+## @tutorial(Demos): https://github.com/Rubonnek/dialogue-engine/tree/master/demos
 
 var _m_dialogue_entry_dictionary : Dictionary = {}
 var _m_dialogue_entry_dictionary_id : int = 0
@@ -245,7 +246,7 @@ func get_option_goto_entry(p_option_id : int) -> DialogueEntry:
 		return dialogue_entry
 
 
-## Attaches a condition. Useful for branching dialogues when certain conditions must be met. If the dialogue entry has options, these will get ignored.
+## Attaches a condition to the entry. Useful for branching dialogues when certain conditions must be met.
 func set_condition(p_callable : Callable) -> void:
 	# NOTE: No need to check if p_callable is null since an error will be generated automatically at runtime.
 	_m_dialogue_entry_dictionary[_key.CONDITION] = p_callable
@@ -258,7 +259,7 @@ func set_condition(p_callable : Callable) -> void:
 	__send_entry_to_engine_viewer()
 
 
-## Get condition:
+## Returns the condition [Callable].
 func get_condition() -> Callable:
 	return _m_dialogue_entry_dictionary.get(_key.CONDITION, Callable())
 
@@ -279,7 +280,7 @@ func get_condition_goto_ids() -> Dictionary:
 	return _m_dialogue_entry_dictionary.get(_key.CONDITION_GOTOS, { true : INVALID_CONDITION_GOTO, false : INVALID_CONDITION_GOTO})
 
 
-## Removes the condition>
+## Removes the condition and converts the conditional-based DialogueEntry into a text-based one unless [method set_condition] is called again.
 func remove_condition() -> void:
 	if _m_dialogue_entry_dictionary.has(_key.CONDITION):
 		var _ignore : bool = _m_dialogue_entry_dictionary.erase(_key.CONDITION)
@@ -311,7 +312,7 @@ func is_options_empty() -> bool:
 	return options_array.is_empty()
 
 
-## Sets the text for the dialogue entry.
+## Sets the name of the [DialogueEntry]. Useful for viewing it on the debugger or finding the entry through [method DialogueEngine.get_entry_with_name].
 func set_name(p_dialogue_entry_name : String) -> void:
 	if p_dialogue_entry_name.is_empty():
 		if _m_dialogue_entry_dictionary.has(_key.NAME):
@@ -319,7 +320,7 @@ func set_name(p_dialogue_entry_name : String) -> void:
 	else:
 		_m_dialogue_entry_dictionary[_key.NAME] = p_dialogue_entry_name
 
-	# Do a sanity check:
+	# Do a uniqueness sanity check -- this is to warn the user that DialogueEngine.get_entry_with_name is consistent and works as expected:
 	if OS.is_debug_build():
 		if not p_dialogue_entry_name.is_empty():
 			for entry_id : int in _m_dialogue_engine.size():
@@ -596,7 +597,7 @@ func __send_entry_to_engine_viewer() -> void:
 		var dialogue_engine_id : int = _m_dialogue_engine.get_instance_id()
 		EngineDebugger.send_message("dialogue_engine:sync_entry", [dialogue_engine_id, _m_dialogue_entry_dictionary_id, duplicated_dialogue_entry_data])
 
-
+# Stringifies the format operation ID so we can display it in the debugger.
 func __stringify_format_operation_id(p_format_operation_id : int) -> String:
 	match p_format_operation_id:
 		FORMAT_NONE:
@@ -611,7 +612,7 @@ func __stringify_format_operation_id(p_format_operation_id : int) -> String:
 	return "FORMAT_INVALID"
 
 
-## Returns a copy of the format data where all the [Callable] getters are called and substituted with their return values.
+# Returns a copy of the format data where all the [Callable] getters are called and substituted with their return values in a stringified format used for debugging purposes.
 func __get_stringified_format() -> Variant:
 	var format_dictionary : Dictionary = get_format()
 	var format_variant : Variant = format_dictionary.get(_key.FORMAT_DATA, [])
