@@ -124,11 +124,6 @@ func get_branch_id() -> int:
 	return _m_branch_id_needle
 
 
-## Returns the currently tracked branch ID that is being read by [method advance] calls. Same as [method get_branch_id].
-func get_branch_id_needle() -> int:
-	return _m_branch_id_needle
-
-
 ## Returns the specified dialogue entry. Returns null if the dialogue entry does not exist.
 func get_entry(p_entry_id : int) -> DialogueEntry:
 	if has_entry_at(p_entry_id):
