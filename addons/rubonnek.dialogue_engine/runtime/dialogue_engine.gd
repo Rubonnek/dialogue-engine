@@ -102,16 +102,6 @@ func add_conditional_entry(p_callable : Callable, p_branch_id : int = DEFAULT_BR
 	return dialogue_entry
 
 
-## Removes the specified [DialogueEntry] from the engine.
-func remove_entry(p_dialogue_entry : DialogueEntry) -> void:
-	_m_dialogue_tree.remove_at(p_dialogue_entry.get_id())
-
-
-## Removes the specified [DialogueEntry] ID from the engine.
-func remove_entry_at(p_dialogue_entry_id : int) -> void:
-	_m_dialogue_tree.remove_at(p_dialogue_entry_id)
-
-
 ## Sets the branch ID used for the next [method advance] calls until a jump to a different branch ID is detected.
 func set_branch_id(p_branch_id : int) -> void:
 	_m_branch_id_needle = p_branch_id
