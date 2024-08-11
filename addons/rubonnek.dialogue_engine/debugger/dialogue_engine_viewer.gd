@@ -333,8 +333,8 @@ func __refresh_graph_for_currently_selected_item() -> void:
 
 			if dialogue_entry.has_format():
 				var format_rich_format_label : RichTextLabel = graph_node.find_child("FormatRichTextLabel")
-				var format_variant : Variant = dialogue_entry.get_format()
-				format_rich_format_label.set_text(JSON.stringify(format_variant, "\t"))
+				var format_dictionary : Dictionary = dialogue_entry.get_format()
+				format_rich_format_label.set_text(JSON.stringify(format_dictionary, "\t"))
 			else:
 				var format_h_split_container : HSplitContainer = graph_node.find_child("FormatHSplitContainer")
 				format_h_split_container.free()
