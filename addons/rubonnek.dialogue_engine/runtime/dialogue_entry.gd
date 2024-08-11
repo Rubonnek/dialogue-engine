@@ -247,6 +247,41 @@ func get_option_goto_entry(p_option_id : int) -> DialogueEntry:
 		return dialogue_entry
 
 
+## Sets option id to be processed by [method DialogueEngine.advance] call when processing the option chosen for the entry. The option id is given by [method add_option].
+func choose_option(p_option_id : int) -> void:
+	_m_dialogue_entry_dictionary[_key.CHOSEN_OPTION] = p_option_id
+
+
+## Returns chosen option. If no chosen option was previously set, it will return [enum INVALID_CHOSEN_OPTION].
+func get_chosen_option() -> int:
+	return _m_dialogue_entry_dictionary.get(_key.CHOSEN_OPTION, INVALID_CHOSEN_OPTION)
+
+
+## Returns chosen option. If no chosen option was previously set, it will return [enum INVALID_CHOSEN_OPTION].
+func has_chosen_option() -> bool:
+	return get_chosen_option() != INVALID_CHOSEN_OPTION
+
+
+## Removes the chosen option.
+func remove_chosen_option() -> void:
+	if _m_dialogue_entry_dictionary.has(_key.CHOSEN_OPTION):
+		var _ignore : bool = _m_dialogue_entry_dictionary.erase(_key.CHOSEN_OPTION)
+
+
+## Removes all the options associated with the dialogue entry.
+func clear_options() -> void:
+	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
+	options_array.clear()
+
+
+## Removes the option at the specified option id.
+func remove_option_at(p_option_id : int) -> void:
+	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
+	if p_option_id < options_array.size():
+		options_array.remove_at(p_option_id)
+	__send_entry_to_engine_viewer()
+
+
 ## Attaches a condition to the entry. Useful for branching dialogues when certain conditions must be met. Consider using [method DialogueEngine.add_conditional_entry] instead.[br]
 ## [br]
 ## [color=yellow]Warning:[/color] This function will convert a text-based DialogueEntry to a conditional one, meaning that its goto and options will be ignored
@@ -380,41 +415,6 @@ func remove_format() -> void:
 		var _ignore : bool = _m_dialogue_entry_dictionary.erase(_key.FORMAT)
 
 
-## Sets option id to be processed by [method DialogueEngine.advance] call when processing the option chosen for the entry. The option id is given by [method add_option].
-func choose_option(p_option_id : int) -> void:
-	_m_dialogue_entry_dictionary[_key.CHOSEN_OPTION] = p_option_id
-
-
-## Returns chosen option. If no chosen option was previously set, it will return [enum INVALID_CHOSEN_OPTION].
-func get_chosen_option() -> int:
-	return _m_dialogue_entry_dictionary.get(_key.CHOSEN_OPTION, INVALID_CHOSEN_OPTION)
-
-
-## Returns chosen option. If no chosen option was previously set, it will return [enum INVALID_CHOSEN_OPTION].
-func has_chosen_option() -> bool:
-	return get_chosen_option() != INVALID_CHOSEN_OPTION
-
-
-## Removes the chosen option.
-func remove_chosen_option() -> void:
-	if _m_dialogue_entry_dictionary.has(_key.CHOSEN_OPTION):
-		var _ignore : bool = _m_dialogue_entry_dictionary.erase(_key.CHOSEN_OPTION)
-
-
-## Removes all the options associated with the dialogue entry.
-func clear_options() -> void:
-	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
-	options_array.clear()
-
-
-## Removes the option at the specified option id.
-func remove_option_at(p_option_id : int) -> void:
-	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
-	if p_option_id < options_array.size():
-		options_array.remove_at(p_option_id)
-	__send_entry_to_engine_viewer()
-
-
 ## Attaches a top-level goto dialogue entry which gets processed when no options are present and the dialogue entry was visited by [method DialgoueEngine.advance] call.
 ## If the goto [DialogueEntry] has a different branch ID, then [method DialogueEngine.set_branch_id] will be called automatically to match the specified branch ID at the target [DialogueEntry] upon the next [method DialogueEngine.advance] call.[br]
 ## When the goto is not provided, [method DialogueEngine.advance] will search for the next dialogue entry on the same branch ID as [method DialogueEngine.get_branch_id].
@@ -428,19 +428,6 @@ func set_goto_id(p_goto_id : int) -> void:
 	if has_condition():
 		push_warning("DialogueEntry: A goto was set on entry with ID '%d' but this same entry has a condition installed. The goto will be ignored if the condition isn't removed." % [_m_dialogue_entry_dictionary_id])
 	__send_entry_to_engine_viewer()
-
-
-## Returns the goto dialogue entry. Returns null when the goto is invalid.
-func get_goto_entry() -> DialogueEntry:
-	if _m_dialogue_entry_dictionary.has(_key.GOTO):
-		var goto_id : int = _m_dialogue_entry_dictionary[_key.GOTO]
-		if _m_dialogue_engine.has_entry_at(goto_id):
-			return _m_dialogue_engine.get_entry_at(goto_id)
-		else:
-			push_warning("DialogueEntry: Attempted to get invalid top-level goto with id '%d' from DialogueEntry with id '%d' and text:\n\n\"%s\"\n\nReturning invalid null DialogueEntry." % [goto_id, _m_dialogue_entry_dictionary_id, get_text()])
-			return null
-	else:
-		return null
 
 
 ## Returns the goto dialogue entry ID.
@@ -457,6 +444,19 @@ func remove_goto() -> void:
 ## Returns true if the dialogue entry has specified top-level goto. False otherwise. Internally, when false, the default dialogue entry goto is the next dialogue ID that also falls under the same branch ID.
 func has_goto() -> bool:
 	return _m_dialogue_entry_dictionary.has(_key.GOTO)
+
+
+## Returns the goto dialogue entry. Returns null when the goto is invalid.
+func get_goto_entry() -> DialogueEntry:
+	if _m_dialogue_entry_dictionary.has(_key.GOTO):
+		var goto_id : int = _m_dialogue_entry_dictionary[_key.GOTO]
+		if _m_dialogue_engine.has_entry_at(goto_id):
+			return _m_dialogue_engine.get_entry_at(goto_id)
+		else:
+			push_warning("DialogueEntry: Attempted to get invalid top-level goto with id '%d' from DialogueEntry with id '%d' and text:\n\n\"%s\"\n\nReturning invalid null DialogueEntry." % [goto_id, _m_dialogue_entry_dictionary_id, get_text()])
+			return null
+	else:
+		return null
 
 
 ## Attaches the specified metadata to the dialogue entry.
