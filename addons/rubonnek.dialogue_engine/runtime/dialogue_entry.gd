@@ -601,7 +601,7 @@ func __send_entry_to_engine_viewer() -> void:
 		if has_format():
 			var stringified_format : Variant = __get_stringified_format()
 			var format_operation_id : int = get_format().get(_key.FORMAT_OPERATION_ID, FORMAT_INVALID)
-			duplicated_dialogue_entry_data[_key.FORMAT] =  { _key.FORMAT_DATA : stringified_format, _key.FORMAT_OPERATION_ID : __stringify_format_operation_id(format_operation_id)}
+			duplicated_dialogue_entry_data[_key.FORMAT] =  { __stringify_format_dictionary_key(_key.FORMAT_DATA) : stringified_format, __stringify_format_dictionary_key(_key.FORMAT_OPERATION_ID) : __stringify_format_operation_id(format_operation_id)}
 
 		# Let's stringify all the metadata keys and values where needed to display them in text form in the viewer
 		var metadata : Dictionary = get_metadata_data()
@@ -617,6 +617,17 @@ func __send_entry_to_engine_viewer() -> void:
 
 		var dialogue_engine_id : int = _m_dialogue_engine.get_instance_id()
 		EngineDebugger.send_message("dialogue_engine:sync_entry", [dialogue_engine_id, _m_dialogue_entry_dictionary_id, duplicated_dialogue_entry_data])
+
+
+# Stringifies the format dictionary keys so they are readable in the debugger.
+func __stringify_format_dictionary_key(p_format_dictionary_key : int) -> String:
+	match p_format_dictionary_key:
+		_key.FORMAT_OPERATION_ID:
+			return "FORMAT_OPERATION_ID"
+		_key.FORMAT_DATA:
+			return "FORMAT_DATA"
+	push_error("DialogueEntry: Could not stringify format key. This should not happen.")
+	return "FORMAT_KEY_INVALID"
 
 
 # Stringifies the format operation ID so we can display it in the debugger.
