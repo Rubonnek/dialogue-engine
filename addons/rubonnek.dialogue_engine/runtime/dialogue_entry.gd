@@ -375,7 +375,7 @@ func has_format() -> bool:
 
 
 ## Removes the format data and format operation id if any.
-func remove_text_vars() -> void:
+func remove_format() -> void:
 	if _m_dialogue_entry_dictionary.has(_key.FORMAT):
 		var _ignore : bool = _m_dialogue_entry_dictionary.erase(_key.FORMAT)
 
