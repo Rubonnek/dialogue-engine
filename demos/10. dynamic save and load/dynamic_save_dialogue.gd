@@ -42,7 +42,7 @@ func load_state() -> void:
 		var file_handle: FileAccess = FileAccess.open(SAVE_PATH, FileAccess.READ)
 		counter = file_handle.get_var()
 		var entry_id : int = file_handle.get_var()
-		if has_entry_at(entry_id):
+		if has_entry_id(entry_id):
 			set_current_entry(entry_id)
 		else:
 			set_current_entry(add_text_entry("Let's continue counting!!").get_id())

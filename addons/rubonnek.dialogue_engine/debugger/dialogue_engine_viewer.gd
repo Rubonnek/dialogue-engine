@@ -414,7 +414,7 @@ func __refresh_graph_for_currently_selected_item() -> void:
 
 			# Add true connection
 			var true_goto_id : int = goto_ids[true]
-			if dialogue_engine.has_entry_at(true_goto_id):
+			if dialogue_engine.has_entry_id(true_goto_id):
 				var goto_dialogue_entry : DialogueEntry = dialogue_engine.get_entry_at(true_goto_id)
 				var from_node : String = dialogue_entry_id_as_string
 				var from_port_in_connection_index_form : int = 0
@@ -424,7 +424,7 @@ func __refresh_graph_for_currently_selected_item() -> void:
 
 			# Add false connection
 			var false_goto_id : int = goto_ids[false]
-			if dialogue_engine.has_entry_at(false_goto_id):
+			if dialogue_engine.has_entry_id(false_goto_id):
 				var goto_dialogue_entry : DialogueEntry = dialogue_engine.get_entry_at(false_goto_id)
 				var from_node : String = dialogue_entry_id_as_string
 				var from_port_in_connection_index_form : int = 1
@@ -455,7 +455,7 @@ func __refresh_graph_for_currently_selected_item() -> void:
 			var outgoing_port_number : int = 0
 			for option_id : int in dialogue_entry.get_option_count():
 				var option_goto_id : int = dialogue_entry.get_option_goto_id(option_id)
-				if dialogue_engine.has_entry_at(option_goto_id):
+				if dialogue_engine.has_entry_id(option_goto_id):
 					# Add connection
 					var goto_dialogue_entry : DialogueEntry = dialogue_entry.get_option_goto_entry(option_id)
 					var from_node : String = dialogue_entry_id_as_string

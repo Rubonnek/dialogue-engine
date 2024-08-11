@@ -218,7 +218,7 @@ func get_option_text(p_option_id : int) -> String:
 func set_option_goto_id(p_option_id : int, p_goto_id : int) -> void:
 	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
 	var target_option : Dictionary = options_array[p_option_id]
-	if _m_dialogue_engine.has_entry_at(p_goto_id):
+	if _m_dialogue_engine.has_entry_id(p_goto_id):
 		target_option[_key.GOTO] = p_goto_id
 	else:
 		push_warning("DialogueEntry: Attempted to set invalid option-level goto with id '%d' against DialogueEntry option id '%d' and text:\n\n\"%s\"\n\nThe previously installed goto will be removed if there's any." % [p_goto_id, p_option_id, get_option_text(p_option_id)])
@@ -239,7 +239,7 @@ func get_option_goto_id(p_option_id : int) -> int:
 ## Returns the [DialogueEntry] stored at the specified option id.
 func get_option_goto_entry(p_option_id : int) -> DialogueEntry:
 	var goto_id : int = get_option_goto_id(p_option_id)
-	if not _m_dialogue_engine.has_entry_at(goto_id):
+	if not _m_dialogue_engine.has_entry_id(goto_id):
 		push_warning("DialogueEntry: Option ID '%d' has an invalid goto ID.\nThe option contains the text:\n\n\"%s\"\n\nThe associated dialogue entry ID is '%d' with text \"%s\"" % [p_option_id, get_option_text(p_option_id), _m_dialogue_entry_dictionary_id, get_text()])
 		return null
 	else:
@@ -256,7 +256,7 @@ func choose_option(p_option_id : int) -> void:
 	if OS.is_debug_build():
 		if has_option_id(p_option_id):
 			var option_goto_id : int = get_option_goto_id(p_option_id)
-			if not _m_dialogue_engine.has_entry_at(option_goto_id):
+			if not _m_dialogue_engine.has_entry_id(option_goto_id):
 				push_warning("DialogueEntry: Chosen option id '%d' has an invalid option goto id.\nThe option contains the text:\n\n\"%s\"\n\nThe associated dialogue entry ID is '%d' with text \"%s\"" % [p_option_id, get_option_text(p_option_id), _m_dialogue_entry_dictionary_id, get_text()])
 		else:
 			push_warning("DialogueEntry: Chosen option id '%d' is currently available for entry with ID '%d' and text: \"%s\"." % [p_option_id, get_id(), get_text()])
@@ -435,7 +435,7 @@ func remove_format() -> void:
 ## If the goto [DialogueEntry] has a different branch ID, then [method DialogueEngine.set_branch_id] will be called automatically to match the specified branch ID at the target [DialogueEntry] upon the next [method DialogueEngine.advance] call.[br]
 ## When the goto is not provided, [method DialogueEngine.advance] will search for the next dialogue entry on the same branch ID as [method DialogueEngine.get_branch_id].
 func set_goto_id(p_goto_id : int) -> void:
-	if _m_dialogue_engine.has_entry_at(p_goto_id):
+	if _m_dialogue_engine.has_entry_id(p_goto_id):
 		_m_dialogue_entry_dictionary[_key.GOTO] = p_goto_id
 	else:
 		push_warning("DialogueEntry: Attempted to set invalid top-level goto with id '%d' against DialogueEntry with id '%d' and text:\n\n\"%s\"\n\nThe previously installed goto will be removed if there's any." % [p_goto_id, _m_dialogue_entry_dictionary_id, get_text()])
@@ -466,7 +466,7 @@ func remove_goto_id() -> void:
 func get_goto_entry() -> DialogueEntry:
 	if _m_dialogue_entry_dictionary.has(_key.GOTO):
 		var goto_id : int = _m_dialogue_entry_dictionary[_key.GOTO]
-		if _m_dialogue_engine.has_entry_at(goto_id):
+		if _m_dialogue_engine.has_entry_id(goto_id):
 			return _m_dialogue_engine.get_entry_at(goto_id)
 		else:
 			push_warning("DialogueEntry: Attempted to get invalid top-level goto with id '%d' from DialogueEntry with id '%d' and text:\n\n\"%s\"\n\nReturning invalid null DialogueEntry." % [goto_id, _m_dialogue_entry_dictionary_id, get_text()])
