@@ -249,7 +249,17 @@ func get_option_goto_entry(p_option_id : int) -> DialogueEntry:
 
 ## Sets option id to be processed by [method DialogueEngine.advance] call when processing the option chosen for the entry. The option id is given by [method add_option].
 func choose_option(p_option_id : int) -> void:
+	# We set the option id without checking it at runtime.
+	# Due to how flexible the API is, there's a slight chance the user add option after calling this function.
+	# If the option id is invalid, DialogueEngine will emit the dialogue_cancelled signal which should be handled by the UI code which is independent of DialogueEngine.
 	_m_dialogue_entry_dictionary[_key.CHOSEN_OPTION] = p_option_id
+	if OS.is_debug_build():
+		if has_option_id(p_option_id):
+			var option_goto_id : int = get_option_goto_id(p_option_id)
+			if not _m_dialogue_engine.has_entry_at(option_goto_id):
+				push_warning("DialogueEntry: Chosen option id '%d' has an invalid option goto id.\nThe option contains the text:\n\n\"%s\"\n\nThe associated dialogue entry ID is '%d' with text \"%s\"" % [p_option_id, get_option_text(p_option_id), _m_dialogue_entry_dictionary_id, get_text()])
+		else:
+			push_warning("DialogueEntry: Chosen option id '%d' is currently available for entry with ID '%d' and text: \"%s\"." % [p_option_id, get_id(), get_text()])
 
 
 ## Returns chosen option. If no chosen option was previously set, it will return [enum INVALID_CHOSEN_OPTION].
@@ -342,6 +352,12 @@ func get_option_count() -> int:
 func has_options() -> bool:
 	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
 	return not options_array.is_empty()
+
+
+## Returns true if the entry has options. False otherwise. Opposite of [method is_options_empty].
+func has_option_id(p_option_id : int) -> bool:
+	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
+	return p_option_id < options_array.size()
 
 
 ## Returns true if the entry has no options. False otherwise. Opposite of [method has_options].
