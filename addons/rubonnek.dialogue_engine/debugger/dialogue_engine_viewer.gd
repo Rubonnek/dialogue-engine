@@ -340,9 +340,9 @@ func __refresh_graph_for_currently_selected_item() -> void:
 				format_h_split_container.free()
 
 			var goto_rich_text_label : RichTextLabel = graph_node.find_child("GoToRichTextLabel")
-			if not dialogue_entry.has_goto():
+			if not dialogue_entry.has_goto_id():
 				goto_rich_text_label.free()
-			elif dialogue_entry.has_goto():
+			elif dialogue_entry.has_goto_id():
 				graph_node.set_slot_enabled_right(goto_rich_text_label.get_index(), true)
 
 			if not dialogue_entry.is_options_empty():
@@ -400,7 +400,7 @@ func __refresh_graph_for_currently_selected_item() -> void:
 		var dialogue_entry_id_as_string : String = dialogue_entry.get_id_as_text()
 		node_string_ids.push_back(dialogue_entry_id_as_string)
 
-		if dialogue_entry.has_goto():
+		if dialogue_entry.has_goto_id():
 			var goto_dialogue_entry : DialogueEntry = dialogue_entry.get_goto_entry()
 
 			# Add connection

@@ -290,7 +290,7 @@ func set_condition(p_callable : Callable) -> void:
 	_m_dialogue_entry_dictionary[_key.CONDITION] = p_callable
 	if has_text():
 		push_warning("DialogueEntry: A condition was set on entry with ID '%d' but this same entry has text installed. During a DialogueEngine.advance() call, this instance won't be emitted through dialogue_continued signal.\nThe associated DialogueEntry text is:\n\n\t\"%s\"" % [_m_dialogue_entry_dictionary_id, get_text()])
-	if has_goto():
+	if has_goto_id():
 		push_warning("DialogueEntry: A condition was set on entry with ID '%d' but this same entry has a goto installed. The goto will be ignored if the condition isn't removed." % [_m_dialogue_entry_dictionary_id])
 	if has_options():
 		push_warning("DialogueEntry: A condition was set on entry with ID '%d' but this same entry has options installed. The options will be ignored if the condition isn't removed.\nThe associated text of the first option is:\n\n\t\"%s\"" % [_m_dialogue_entry_dictionary_id, get_option_text(0)])
@@ -435,15 +435,15 @@ func get_goto_id() -> int:
 	return _m_dialogue_entry_dictionary.get(_key.GOTO, GOTO_DEFAULT)
 
 
+## Returns true if the dialogue entry has specified top-level goto. False otherwise. Internally, when false, the default dialogue entry goto is the next dialogue ID that also falls under the same branch ID.
+func has_goto_id() -> bool:
+	return _m_dialogue_entry_dictionary.has(_key.GOTO)
+
+
 ## Removes the goto ID. A default goto is calculated in [method DialogueEngine.advance] by default and it's calculated to be the next dialogue entry on the same branch as [method DialogueEngine.get_branch_id].
-func remove_goto() -> void:
+func remove_goto_id() -> void:
 	if _m_dialogue_entry_dictionary.has(_key.GOTO):
 		var _ignore : bool = _m_dialogue_entry_dictionary.erase(_key.GOTO)
-
-
-## Returns true if the dialogue entry has specified top-level goto. False otherwise. Internally, when false, the default dialogue entry goto is the next dialogue ID that also falls under the same branch ID.
-func has_goto() -> bool:
-	return _m_dialogue_entry_dictionary.has(_key.GOTO)
 
 
 ## Returns the goto dialogue entry. Returns null when the goto is invalid.
