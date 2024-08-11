@@ -679,11 +679,17 @@ func __stringify_callables_and_objects_in_array(p_array : Array) -> Array:
 	var pending_queue : Array = []
 	for index : int in p_array.size():
 		var variant : Variant = p_array[index]
-		if variant is Callable or variant is Object:
-			@warning_ignore("unsafe_method_access")
-			p_array[index] = str(variant)
+		if variant is Callable:
+			var callable : Callable = variant
+			var callable_as_string : String = str(callable) + "("
+			for bound_argument : Variant in callable.get_bound_arguments():
+				callable_as_string += str(bound_argument) + ", "
+			callable_as_string = callable_as_string.trim_suffix(", ") + ")"
+			p_array[index] = callable_as_string
 		elif variant is Array or variant is Dictionary:
 			pending_queue.push_back(variant)
+		elif variant is Object:
+			p_array[index] = str(variant)
 	return pending_queue
 
 
@@ -692,10 +698,16 @@ func __stringify_callables_and_objects_in_dictionary(p_dictionary : Dictionary) 
 	var pending_queue : Array = []
 	for key : Variant in p_dictionary:
 		var variant : Variant = p_dictionary[key]
-		if variant is Callable or variant is Object:
-			p_dictionary[key] = str(variant)
+		if variant is Callable:
+			var callable : Callable = variant
+			var callable_as_string : String = str(callable) + "("
+			for bound_argument : Variant in callable.get_bound_arguments():
+				callable_as_string += str(bound_argument) + ", "
+			p_dictionary[key] = callable_as_string.trim_suffix(", ") + ")"
 		elif variant is Array or variant is Dictionary:
 			pending_queue.push_back(variant)
+		elif variant is Object:
+			p_dictionary[key] = str(variant)
 	return pending_queue
 
 func _init(p_dialogue_entry_id : int = 0, p_dialogue_engine : DialogueEngine = null, p_target_dialogue_entry_dictionary : Dictionary = {}) -> void:
