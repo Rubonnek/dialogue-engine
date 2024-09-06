@@ -112,7 +112,7 @@ func create_visible_characters_animation_per_character(p_text : String, p_time_p
 	animation.track_set_path(track_index, ".:visible_characters")
 	animation.track_set_interpolation_type(track_index, Animation.INTERPOLATION_LINEAR)
 	var sound_track_index : int = animation.add_track(Animation.TYPE_METHOD)
-	# The path provided here points to the root node (i.e. ComplexDialogue node)
+	# The path provided here points to the root node (i.e. SimpleDialogue node)
 	animation.track_set_path(sound_track_index, "../../../../../..")
 
 	# Configure keys
