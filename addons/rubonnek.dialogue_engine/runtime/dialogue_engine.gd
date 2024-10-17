@@ -43,7 +43,7 @@ extends RefCounted
 ## var dialogue_engine : DialogueEngine = DialogueEngine.new()
 ## dialogue_engine.add_text_entry("Hello")
 ##
-## var print_dialogue : Callable = func (dialogue_entry ; DialogueEntry) -> void:
+## var print_dialogue : Callable = func (dialogue_entry : DialogueEntry) -> void:
 ##     print(dialogue_entry.get_text())
 ##
 ## dialogue_engine.dialogue_continued.connect(print_dialogue)
