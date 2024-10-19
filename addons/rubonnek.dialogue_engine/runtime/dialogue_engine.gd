@@ -364,19 +364,19 @@ func _init() -> void:
 		# Setup event callbacks
 		var notify_debugger_to_reset_graph_colors : Callable = func () -> void:
 			EngineDebugger.send_message("dialogue_engine:dialogue_started", [get_instance_id()])
-		var _success : int = connect(&"dialogue_started", notify_debugger_to_reset_graph_colors)
+		var _success : int = dialogue_started.connect(notify_debugger_to_reset_graph_colors)
 
 		var notify_debugger_of_entry_visited : Callable = func (p_dialogue_entry : DialogueEntry) -> void:
 			EngineDebugger.send_message("dialogue_engine:entry_visited", [get_instance_id(), p_dialogue_entry.get_id()])
-		_success = connect(&"entry_visited", notify_debugger_of_entry_visited)
+		_success = entry_visited.connect(notify_debugger_of_entry_visited)
 
 		var notify_debugger_of_dialogue_finished : Callable = func () -> void:
 			EngineDebugger.send_message("dialogue_engine:dialogue_finished", [get_instance_id()])
-		_success = connect(&"dialogue_finished", notify_debugger_of_dialogue_finished)
+		_success = dialogue_finished.connect(notify_debugger_of_dialogue_finished)
 
 		var notify_debugger_of_dialogue_cancelled : Callable = func () -> void:
 			EngineDebugger.send_message("dialogue_engine:dialogue_cancelled", [get_instance_id()])
-		_success = connect(&"dialogue_cancelled", notify_debugger_of_dialogue_cancelled)
+		_success = dialogue_cancelled.connect(notify_debugger_of_dialogue_cancelled)
 
 	# Execute the "pure virtual" call -- users may (or may not) use this call to setup their dialogue
 	_setup()
