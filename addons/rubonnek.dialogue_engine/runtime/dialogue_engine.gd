@@ -31,7 +31,7 @@ extends RefCounted
 ## A minimalistic dialogue engine that fits into your GUI nodes and automatically graphs the branching dialogues for easy debugging.
 ##
 ## DialogueEngine provides an API for creating dialogue trees and walking them, and the user is responsible for providing the GUI code that presents the text to the player.
-## The engine internally manages an array of dictionaries each of which are accessed as a [DialogueEntry] which are the basic repsentation of the entries within dialogue tree.
+## The engine internally manages an array of dictionaries each of which are accessed as a [DialogueEntry] which are the basic representation of the entries within dialogue tree.
 ## [br]
 ## [br]
 ## Each [DialogueEntry] can be of two types: text or conditional. Text-based entries represent a block of text to be shown in the dialog along with possible options the player can choose. Conditional-based entries represent a bifurcation point in the dialogue tree the path of which is dictated by a user-supplied boolean [Callable].
