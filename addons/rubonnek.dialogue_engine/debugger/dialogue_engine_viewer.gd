@@ -158,7 +158,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			var stored_dialogue_engine_data : Array = stored_dialogue_engine.get_data()
 			if stored_dialogue_engine_data.size() <= remote_dialogue_entry_id:
 				if stored_dialogue_engine_data.resize(remote_dialogue_entry_id + 1) != OK:
-					push_warning("DialogueEngineViewer: Unable to reside dialogue engine data array! The array won't be visualized properly.")
+					push_warning("DialogueEngineViewer: Unable to resize dialogue engine data array! The array won't be visualized properly.")
 					return true
 			var remote_dialogue_entry_data : Dictionary = p_data[2]
 			var remote_dialogue_entry : DialogueEntry = DialogueEntry.new(0, null, remote_dialogue_entry_data)
