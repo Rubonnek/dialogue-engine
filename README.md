@@ -17,9 +17,9 @@ A minimalistic dialogue engine for the Godot Game Engine.
 
 ## 🚀 Getting Started
 
-- Clone/[download](https://github.com/Rubonnek/godot-dialogue-engine/archive/refs/heads/master.zip) the repository and check out the demos!
+- Clone/[download](https://github.com/Rubonnek/dialogue-engine/archive/refs/heads/master.zip) the repository and check out the demos!
 
 ## 📦 Installation
 
-[Download](https://github.com/Rubonnek/godot-dialogue-engine/archive/refs/heads/master.zip) or clone this repository and copy the contents of the
+[Download](https://github.com/Rubonnek/dialogue-engine/archive/refs/heads/master.zip) or clone this repository and copy the contents of the
 `addons` folder to your own project's `addons` folder, and enable the `Dialogue Engine Viewer` plugin in the Project Settings.

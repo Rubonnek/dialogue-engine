@@ -3,7 +3,7 @@
 #============================================================================
 #                         This file is part of:                             |
 #                            DIALOGUE ENGINE                                |
-#           https://github.com/Rubonnek/godot-dialogue-engine               |
+#           https://github.com/Rubonnek/dialogue-engine                     |
 #============================================================================
 # Copyright (c) 2023-2024 Wilson Enrique Alvarez Torres                     |
 #                                                                           |
