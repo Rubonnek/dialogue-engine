@@ -74,7 +74,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 			# Store a local DialogueEngine as metadata -- reuse one if provided.
 			var dialogue_engine : DialogueEngine = DialogueEngine.new()
-			dialogue_engine.set_meta(&"id", dialogue_engine_id) # store the remote Object instance id as a meta value -- we'll need it to clear the memory of the Tree later on
+			dialogue_engine.set_meta(&"remote_object_id", dialogue_engine_id)
 			dialogue_engine_tree_item.set_metadata(column, dialogue_engine)
 			return true
 
@@ -225,7 +225,7 @@ const _m_previously_visited_color : Color = Color(0.271, 0.447, 0.89)
 const _m_last_node_visited_color : Color = Color(0, 0.529, 0.318)
 const _m_cancelled_dialogue_color : Color = Color(0.69, 0, 0)
 func __update_graph_node_highlights_if_needed(p_dialogue_engine : DialogueEngine) -> void:
-	var dialogue_engine_id : int = p_dialogue_engine.get_meta(&"id")
+	var dialogue_engine_id : int = p_dialogue_engine.get_meta(&"remote_object_id")
 	var dialogue_entries_visited : Array = p_dialogue_engine.get_meta(&"dialogue_entries_visited", [])
 	if __is_selected_tree_item_related_to_dialogue_engine(dialogue_engine_id):
 		# Highlight all the previosuly visited nodes in a specific color
