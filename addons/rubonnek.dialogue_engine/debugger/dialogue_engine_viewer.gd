@@ -132,9 +132,8 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			var dialogue_engine_id : int = p_data[0]
 			var meta_key : String = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
-			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			var remote_name : String = p_data[1]
-			stored_dialogue_engine.set_name(remote_name)
+			dialogue_engine_tree_item.set_text(column, remote_name)
 			__update_graph_if_needed(dialogue_engine_id)
 			return true
 
