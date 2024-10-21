@@ -178,14 +178,6 @@ func __generate_meta_key(p_id : int) -> String:
 # ===== VISUALIZATION FUNCTIONS BEGIN ====
 const _m_choose_dialogue_string : String = "Choose a DialogueEngine to visualize."
 func __on_session_started() -> void:
-	# Clear all the metadata from the tree to avoid leaking memory when a new session start:
-	var root : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_root()
-	for child : TreeItem in root.get_children():
-		var dialogue_engine : DialogueEngine = child.get_metadata(0)
-		var dialogue_engine_id : int = dialogue_engine.get_meta(&"id")
-		var meta_key : String = __generate_meta_key(dialogue_engine_id)
-		m_dialogue_engine_viewer_engine_selection_tree.remove_meta(meta_key)
-
 	# Clear the TreeItem objects
 	m_dialogue_engine_viewer_engine_selection_tree.clear()
 	var _root : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.create_item() # need to recreate the root TreeItem which gets ignored
