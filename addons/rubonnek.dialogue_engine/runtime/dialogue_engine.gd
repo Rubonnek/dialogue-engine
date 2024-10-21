@@ -280,7 +280,7 @@ func get_entry_with_name(p_dialogue_entry_name : String) -> DialogueEntry:
 	return null
 
 
-## Injects the [DialogueEntry] at the end of the chain of its current branch. This function is mostly used for internal purposes. Prefer using [method add_text_entry] or [method add_conditional_entry] instead.
+## Injects the [DialogueEntry] at the end of the chain of its current branch.
 func push_back(p_dialogue_entry : DialogueEntry) -> void:
 	var write_needle : int = _m_dialogue_tree.size()
 	_m_dialogue_tree.push_back(p_dialogue_entry.get_data())
@@ -288,7 +288,9 @@ func push_back(p_dialogue_entry : DialogueEntry) -> void:
 	p_dialogue_entry.set_id(write_needle)
 
 
-## Pops a [DialogueEntry] from the chain.
+## Pops a [DialogueEntry] from the chain.[br]
+## br]
+## [color=yellow]Warning:[/color] the returned entry will be detached from the dialogue engine.
 func pop_back() -> DialogueEntry:
 	var dialogue_entry_dictionary : Dictionary = _m_dialogue_tree.pop_back()
 	var dialogue_entry : DialogueEntry = DialogueEntry.new(-1, null, dialogue_entry_dictionary)
