@@ -203,6 +203,7 @@ func __on_tree_nothing_selected() -> void:
 	__cleanup_graph_edit()
 	m_dialogue_engine_viewer_input_blocker_hint_rich_text_label.set_text(_m_choose_dialogue_string)
 	m_dialogue_engine_viewer_input_blocker_center_container.show()
+	m_dialogue_engine_viewer_engine_selection_tree.deselect_all()
 
 
 func __update_graph_if_needed(p_dialogue_engine_id : int) -> void:
