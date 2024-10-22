@@ -7,7 +7,7 @@ var session_id_to_dialogue_engine_viewer : Dictionary = {}
 
 func _setup_session(p_session_id : int) -> void:
 	# Add a new tab in the debugger session UI containing a label.
-	var dialogue_engine_viewer : Control = preload("./dialogue_engine_viewer.tscn").instantiate()
+	var dialogue_engine_viewer : Control = preload("dialogue_engine_viewer.tscn").instantiate()
 	var editor_debugger_session : EditorDebuggerSession = get_session(p_session_id)
 
 	# Listen to the session started and stopped signals.

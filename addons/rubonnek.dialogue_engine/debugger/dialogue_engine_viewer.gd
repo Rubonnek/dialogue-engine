@@ -8,7 +8,7 @@ extends PanelContainer
 @onready var m_dialogue_engine_viewer_engine_selection_line_edit : LineEdit  = find_child("DialogueEngineViewerEngineSelectionLineEdit")
 @onready var m_dialogue_engine_viewer_engine_selection_tree : Tree  = find_child("DialogueEngineViewerEngineSelectionTree")
 @onready var m_dialogue_engine_viewer_graph_edit : GraphEdit = find_child("DialogueEngineViewerGraphEdit")
-var m_base_dialogue_entry_graph_node_packed_scene : PackedScene = preload("./base_dialogue_entry_graph_node.tscn")
+var m_base_dialogue_entry_graph_node_packed_scene : PackedScene = preload("base_dialogue_entry_graph_node.tscn")
 
 
 func _ready() -> void:

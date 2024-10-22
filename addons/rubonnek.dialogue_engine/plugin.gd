@@ -2,7 +2,7 @@
 extends EditorPlugin
 
 
-var m_editor_debugger_plugin : EditorDebuggerPlugin = (load((get_script() as Resource).get_path().get_base_dir().path_join("debugger/editor_debugger_plugin.gd")) as GDScript).new()
+var m_editor_debugger_plugin : EditorDebuggerPlugin = preload("debugger/editor_debugger_plugin.gd").new()
 
 
 func _has_main_screen() -> bool:
