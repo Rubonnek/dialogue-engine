@@ -710,6 +710,7 @@ func __stringify_callables_and_objects_in_dictionary(p_dictionary : Dictionary) 
 			p_dictionary[key] = str(variant)
 	return pending_queue
 
+
 func _init(p_dialogue_entry_id : int = 0, p_dialogue_engine : DialogueEngine = null, p_target_dialogue_entry_dictionary : Dictionary = {}) -> void:
 	_m_dialogue_entry_dictionary = p_target_dialogue_entry_dictionary
 	_m_dialogue_entry_dictionary_id = p_dialogue_entry_id
