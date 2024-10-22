@@ -144,8 +144,7 @@ func get_evaluated_format() -> Variant:
 	@warning_ignore("unsafe_method_access")
 	var evaluated_format : Variant = format_variant.duplicate(true)
 
-	@warning_ignore("untyped_declaration")
-	var container_ref
+	var container_ref : Variant
 	var queue : Array = []
 	queue.push_back(evaluated_format)
 	while not queue.is_empty():
@@ -325,7 +324,7 @@ func set_condition_goto_ids(p_goto_id_if_true : int, p_goto_id_if_false : int) -
 
 ## Returns the condition goto IDs.
 func get_condition_goto_ids() -> Dictionary:
-	return _m_dialogue_entry_dictionary.get(_key.CONDITION_GOTOS, { true : INVALID_CONDITION_GOTO, false : INVALID_CONDITION_GOTO})
+	return _m_dialogue_entry_dictionary.get(_key.CONDITION_GOTOS, {true : INVALID_CONDITION_GOTO, false : INVALID_CONDITION_GOTO})
 
 
 ## Removes the condition and converts the conditional-based DialogueEntry into a text-based one unless [method set_condition] is called again.
@@ -659,8 +658,7 @@ func __get_stringified_format() -> Variant:
 	@warning_ignore("unsafe_method_access")
 	var evaluated_format : Variant = format_variant.duplicate(true)
 
-	@warning_ignore("untyped_declaration")
-	var container_ref
+	var container_ref : Variant
 	var queue : Array = []
 	queue.push_back(evaluated_format)
 	while not queue.is_empty():
