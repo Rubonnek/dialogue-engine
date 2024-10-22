@@ -69,7 +69,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			# Create the associated tree_item and add it as metadata against the tree itself so that we can extract it easily when we receive messages from this specific DialogueEngine instance id
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.create_item()
 			dialogue_engine_tree_item.set_text(column, target_name)
-			var meta_key : String = __generate_meta_key(dialogue_engine_id)
+			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
 			m_dialogue_engine_viewer_engine_selection_tree.set_meta(meta_key, dialogue_engine_tree_item)
 
 			# Store a local DialogueEngine as metadata -- reuse one if provided.
@@ -80,7 +80,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"dialogue_engine:dialogue_started":
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : String = __generate_meta_key(dialogue_engine_id)
+			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			if stored_dialogue_engine.has_meta(&"dialogue_entries_visited"):
@@ -96,7 +96,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 		"dialogue_engine:entry_visited":
 			# Track the entry visited to highlight it on the GraphEdit
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : String = __generate_meta_key(dialogue_engine_id)
+			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			var dialogue_entry_id : int = p_data[1]
@@ -111,7 +111,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 		"dialogue_engine:dialogue_finished":
 			# Track the entry visited to highlight it on the GraphEdit
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : String = __generate_meta_key(dialogue_engine_id)
+			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			stored_dialogue_engine.set_meta(&"dialogue_finished", true)
@@ -121,7 +121,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 		"dialogue_engine:dialogue_cancelled":
 			# Track the entry visited to highlight it on the GraphEdit
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : String = __generate_meta_key(dialogue_engine_id)
+			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			stored_dialogue_engine.set_meta(&"dialogue_cancelled", true)
@@ -130,7 +130,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"dialogue_engine:set_name":
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : String = __generate_meta_key(dialogue_engine_id)
+			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var remote_name : String = p_data[1]
 			dialogue_engine_tree_item.set_text(column, remote_name)
@@ -139,7 +139,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"dialogue_engine:set_branch_id":
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : String = __generate_meta_key(dialogue_engine_id)
+			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			var branch_id : int = p_data[1]
@@ -149,7 +149,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"dialogue_engine:sync_entry":
 			var dialogue_engine_id : int = p_data[0]
-			var meta_key : String = __generate_meta_key(dialogue_engine_id)
+			var meta_key : StringName = __generate_meta_key(dialogue_engine_id)
 			var dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			var remote_dialogue_entry_id : int = p_data[1]
@@ -169,8 +169,8 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 	return false
 
 
-func __generate_meta_key(p_id : int) -> String:
-	return "_" + String.num_uint64(p_id)
+func __generate_meta_key(p_id : int) -> StringName:
+	return StringName("_" + String.num_uint64(p_id))
 # ==== EDITOR DEBUGGER PLUGIN PASSTHROUGH FUNCTIONS ENDS ======
 
 
@@ -213,7 +213,7 @@ func __update_graph_if_needed(p_dialogue_engine_id : int) -> void:
 func __is_selected_tree_item_related_to_dialogue_engine(p_dialogue_engine_id : int) -> bool:
 	var selected_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_selected()
 	if is_instance_valid(selected_tree_item):
-		var meta_key : String = __generate_meta_key(p_dialogue_engine_id)
+		var meta_key : StringName = __generate_meta_key(p_dialogue_engine_id)
 		var target_dialogue_engine_tree_item : TreeItem = m_dialogue_engine_viewer_engine_selection_tree.get_meta(meta_key)
 		if target_dialogue_engine_tree_item == selected_tree_item:
 			return true
