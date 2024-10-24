@@ -498,10 +498,9 @@ func has_metadata(p_key : Variant) -> Variant:
 ## Returns a reference to the internal metadata dictionary.
 func get_metadata_data() -> Dictionary:
 	var metadata : Dictionary = _m_dialogue_entry_dictionary.get(_key.METADATA, {})
-	if metadata.is_empty():
-		if not _m_dialogue_entry_dictionary.has(_key.METADATA):
-			# There's a chance the user wants to modify it externally and have it update the DialogueEntry automatically -- make sure we store a reference of that metadata:
-			_m_dialogue_entry_dictionary[_key.METADATA] = metadata
+	if not _m_dialogue_entry_dictionary.has(_key.METADATA):
+		# There's a chance the user wants to modify it externally and have it update the DialogueEntry automatically -- make sure we store a reference of that metadata:
+		_m_dialogue_entry_dictionary[_key.METADATA] = metadata
 	return metadata
 
 
