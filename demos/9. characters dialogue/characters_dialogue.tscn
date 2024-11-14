@@ -1,21 +1,21 @@
 [gd_scene load_steps=5 format=3 uid="uid://djkxscwuw617h"]
 
-[ext_resource type="Script" path="res://demos/9. simple dialogue/simple_dialogue.gd" id="1_k6tb7"]
-[ext_resource type="Script" path="res://demos/9. simple dialogue/dialogue.gd" id="2_ovhkd"]
-[ext_resource type="Texture2D" uid="uid://cr0rdb3ab8xwg" path="res://icon.svg" id="3_ew41p"]
+[ext_resource type="Script" path="res://demos/9. characters dialogue/characters_dialogue.gd" id="1_8cs7o"]
+[ext_resource type="Script" path="res://demos/9. characters dialogue/dialogue.gd" id="2_7nqnc"]
+[ext_resource type="Texture2D" uid="uid://cr0rdb3ab8xwg" path="res://icon.svg" id="3_buhne"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hqwn4"]
 bg_color = Color(0, 0, 0, 1)
 
-[node name="SimpleDialogue" type="Control"]
+[node name="CharactersDialogue" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_k6tb7")
-dialogue_gdscript = ExtResource("2_ovhkd")
+script = ExtResource("1_8cs7o")
+dialogue_gdscript = ExtResource("2_7nqnc")
 
 [node name="DialogueEngineDemoQuickStartPanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -67,7 +67,7 @@ visible = false
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 size_flags_horizontal = 0
-texture = ExtResource("3_ew41p")
+texture = ExtResource("3_buhne")
 expand_mode = 1
 
 [node name="John" type="TextureRect" parent="Center/Box/Margin/VBox"]
@@ -76,7 +76,7 @@ modulate = Color(0.980392, 0.631373, 1, 1)
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 size_flags_horizontal = 8
-texture = ExtResource("3_ew41p")
+texture = ExtResource("3_buhne")
 expand_mode = 1
 
 [node name="Animator" type="AnimationPlayer" parent="."]
