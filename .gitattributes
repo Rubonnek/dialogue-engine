@@ -3,3 +3,10 @@
 
 # Ignore hidden files on export
 .* export-ignore
+
+# Ignore unnecessary project files upon export
+icon.svg export-ignore
+icon.svg.import export-ignore
+project.godot export-ignore
+LICENSE export-ignore
+README.md export-ignore
