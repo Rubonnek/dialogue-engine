@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://addons/rubonnek.dialogue_engine/debugger/dialogue_engine_viewer.gd" id="1_i42ty"]
 
-[node name="DialogueEngine" type="PanelContainer"]
+[node name="DialogueEngine" type="PanelContainer" node_paths=PackedStringArray("dialogue_engine_viewer_input_blocker_center_container_", "dialogue_engine_viewer_input_blocker_hint_rich_text_label_", "dialogue_engine_viewer_engine_selection_line_edit_", "dialogue_engine_viewer_engine_selection_tree_", "dialogue_engine_viewer_graph_edit_")]
 custom_minimum_size = Vector2(0, 240)
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,6 +10,11 @@ anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_i42ty")
+dialogue_engine_viewer_input_blocker_center_container_ = NodePath("DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerGraphEditDisplayPanelContainer/DialogueEngineViewerInputBlockerCenterContainer")
+dialogue_engine_viewer_input_blocker_hint_rich_text_label_ = NodePath("DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerGraphEditDisplayPanelContainer/DialogueEngineViewerInputBlockerCenterContainer/DialogueEngineViewerInputBlockerHintRichTextLabel")
+dialogue_engine_viewer_engine_selection_line_edit_ = NodePath("DialogueEngineViewerHSplitContainer/DialogueEngineViewerEngineSelectionVBoxContainer/DialogueEngineViewerEngineSelectionLineEdit")
+dialogue_engine_viewer_engine_selection_tree_ = NodePath("DialogueEngineViewerHSplitContainer/DialogueEngineViewerEngineSelectionVBoxContainer/DialogueEngineViewerEngineSelectionTree")
+dialogue_engine_viewer_graph_edit_ = NodePath("DialogueEngineViewerHSplitContainer/DialogueEngineViewerGraphEditDisplayVBoxContainer/DialogueEngineViewerGraphEditDisplayPanelContainer/DialogueEngineViewerGraphEdit")
 
 [node name="DialogueEngineViewerHSplitContainer" type="HSplitContainer" parent="."]
 layout_mode = 2
