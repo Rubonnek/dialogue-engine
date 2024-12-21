@@ -7,6 +7,10 @@ var start_counting_id : int = 0
 var log_history : Array = []
 
 
+func get_log_history() -> Array:
+	return log_history
+
+
 func _setup() -> void:
 	add_text_entry("This is an example of an infinite dynamically generated/saved/loaded dialogue.")
 	add_text_entry("You can save the dialogue progress at any time by clicking the save button above.")
