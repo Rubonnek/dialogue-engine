@@ -54,12 +54,12 @@ func __on_dialogue_continued(p_dialogue_entry : DialogueEntry) -> void:
 				# Only show other buttons after the tween finishes
 				button.hide()
 				tween.tween_callback(button.show).set_delay(5.0)
-				
+
 				if option_id == 1:
 					tween.tween_callback(button.grab_focus)
 					tween.tween_callback(progress_bar.show)
 					tween.tween_method(progress_bar.set_value, 1.0, 0.0, 2.0)
-					
+
 					# The timer has just finished
 					tween.tween_callback(progress_bar.hide)
 					tween.tween_callback(advance_dialogue_no_answer)
@@ -71,7 +71,7 @@ func __on_dialogue_continued(p_dialogue_entry : DialogueEntry) -> void:
 func advance_dialogue_no_answer() -> void:
 	for button : Button in enabled_buttons:
 		button.set_disabled(true)
-	
+
 	var entry : DialogueEntry = dialogue_engine.get_current_entry()
 	var option_id : int = entry.get_metadata("auto_choose")
 	entry.choose_option(option_id)
