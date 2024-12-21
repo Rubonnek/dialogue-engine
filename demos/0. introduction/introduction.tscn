@@ -10,12 +10,9 @@ grow_vertical = 2
 [node name="IntroductionDemoVBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="IntroductionDemoExaplanationPanelContainer" type="PanelContainer" parent="IntroductionDemoVBoxContainer"]
+[node name="IntroductionDemoExaplanationLabel" type="Label" parent="IntroductionDemoVBoxContainer"]
 layout_mode = 2
-
-[node name="IntroductionDemoExaplanationLabel" type="Label" parent="IntroductionDemoVBoxContainer/IntroductionDemoExaplanationPanelContainer"]
-layout_mode = 2
-text = "Basic dialogue processing is composed of two parts:"
+text = "Basic dialogue processing is composed of two parts."
 horizontal_alignment = 1
 
 [node name="IntroductionDemoPreparationLabel" type="Label" parent="IntroductionDemoVBoxContainer"]
