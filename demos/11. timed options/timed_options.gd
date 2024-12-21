@@ -19,7 +19,7 @@ func _ready() -> void:
 func _input(p_input_event : InputEvent) -> void:
 	if p_input_event.is_action_pressed(&"ui_accept"):
 		dialogue_engine.advance()
-		accept_event() # to avoid hidding an button due to the input event travelling through the children
+		accept_event() # to avoid hitting a button due to the input event travelling through the children
 
 
 func __on_dialogue_started() -> void:
