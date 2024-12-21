@@ -2,7 +2,7 @@ extends DialogueEngine
 
 
 enum {
-DEFAULT_TOPIC = 0, # this is the branch used by default unless set_branch_id() is used
+DEFAULT_TOPIC = 0, # this is the default branch id used at each add_text_entry call unless a different branch ID is specified
 GO_BACK_TO_SLEEP = 1,
 KEEP_WORKING = 2
 }
@@ -10,12 +10,12 @@ KEEP_WORKING = 2
 
 func _setup() -> void:
 	var entry : DialogueEntry = add_text_entry("The storm rages right outside the window. I should...")
-	var option_id_1 : int = entry.add_option("Go back to sleep.")
-	var option_id_2 : int = entry.add_option("Get back to work.")
 
+	var option_id_1 : int = entry.add_option("Go back to sleep.")
 	var option_id_1_entry : DialogueEntry = add_text_entry("That's right, sleep is for the strong 💪.", GO_BACK_TO_SLEEP)
 	entry.set_option_goto_id(option_id_1, option_id_1_entry.get_id())
 
+	var option_id_2 : int = entry.add_option("Get back to work.")
 	var option_id_2_entry : DialogueEntry = add_text_entry("That's right, let's get back to work 🫡", KEEP_WORKING)
 	entry.set_option_goto_id(option_id_2, option_id_2_entry.get_id())
 
