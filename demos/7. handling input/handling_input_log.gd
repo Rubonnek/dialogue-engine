@@ -32,7 +32,7 @@ func __on_dialogue_continued(p_dialogue_entry : DialogueEntry) -> void:
 		label.set_text("  > " + p_dialogue_entry.get_formatted_text())
 	add_child(label)
 
-	if p_dialogue_entry.has_metadata(&"get_player_name"):
+	if p_dialogue_entry.has_metadata("get_player_name"):
 		__get_player_name()
 
 
@@ -45,7 +45,6 @@ func __on_dialogue_cancelled() -> void:
 	print("Dialogue Cancelled! Exiting...")
 	get_tree().quit()
 
-# Must return player name to update the variable within DialogueEngine
 func __get_player_name() -> void:
 	var line_edit : LineEdit = LineEdit.new()
 	add_child(line_edit)
@@ -56,6 +55,7 @@ func __get_player_name() -> void:
 	line_edit.grab_focus()
 	line_edit.set_placeholder("Enter your name.")
 	set_process_input(false)
+	# Must wait to get the player name in order to update the variable within DialogueEngine
 	await line_edit.text_submitted
 	line_edit.set_editable(false)
 	@warning_ignore("unsafe_property_access")
