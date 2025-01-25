@@ -197,7 +197,7 @@ func add_option(p_text : String) -> int:
 	return option_id
 
 
-## Overwrites the option text entry
+## Overwrites the option text entry.
 func set_option_text(p_option_id : int, p_text : String) -> void:
 	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
 	var target_option : Dictionary = options_array[p_option_id]
@@ -213,7 +213,7 @@ func get_option_text(p_option_id : int) -> String:
 	return text
 
 
-## Sets the option goto entry id
+## Sets the option goto entry id.
 func set_option_goto_id(p_option_id : int, p_goto_id : int) -> void:
 	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
 	var target_option : Dictionary = options_array[p_option_id]
@@ -293,7 +293,7 @@ func remove_option_at(p_option_id : int) -> void:
 
 ## Attaches a condition to the entry. Useful for branching dialogues when certain conditions must be met. Consider using [method DialogueEngine.add_conditional_entry] instead.[br]
 ## [br]
-## [color=yellow]Warning:[/color] This function will convert a text-based DialogueEntry to a conditional one, meaning that its goto and options will be ignored
+## [color=yellow]Warning:[/color] This function will convert a text-based DialogueEntry to a conditional one, meaning that its goto and options will be ignored.
 func set_condition(p_callable : Callable) -> void:
 	# NOTE: No need to check if p_callable is null since an error will be generated automatically at runtime.
 	_m_dialogue_entry_dictionary[_key.CONDITION] = p_callable

@@ -59,7 +59,7 @@ extends RefCounted
 class_name DialogueEngine
 
 
-## Emitted when the first [DialogueEntry] is read
+## Emitted when the first [DialogueEntry] is read.
 signal dialogue_started
 ## Emitted when [method advance] visits a [DialogueEntry] that has text.
 signal dialogue_continued(p_dialogue_entry : DialogueEntry)
@@ -74,7 +74,7 @@ signal dialogue_cancelled
 
 
 enum {
-## Denotes the default branch ID when none is provideed
+## Denotes the default branch ID when none is provided.
 DEFAULT_BRANCH_ID = 0,
 }
 
@@ -297,7 +297,7 @@ func pop_back() -> DialogueEntry:
 	return dialogue_entry
 
 
-## Resets the internal reading needle. Calling [method next]
+## Resets the internal reading needle.
 func reset() -> void:
 	# If we are not finished reading, the dialogue was cancelled -- notify listeners
 	if _m_read_needle != 0 and _m_read_needle != _m_dialogue_tree.size():
@@ -318,7 +318,7 @@ func __reset_needles() -> void:
 	_m_invalid_goto_detected = false
 
 
-## Returns an a list of unique branch IDs associated with the engine.
+## Returns a list of unique branch IDs associated with the engine.
 func get_unique_branch_ids() -> Array:
 	var branch_ids_dictionary : Dictionary = {}
 	for dialogue_entry_id : int in _m_dialogue_tree.size():
