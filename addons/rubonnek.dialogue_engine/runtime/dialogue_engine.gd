@@ -289,7 +289,7 @@ func push_back(p_dialogue_entry : DialogueEntry) -> void:
 
 
 ## Pops a [DialogueEntry] from the chain.[br]
-## br]
+## [br]
 ## [color=yellow]Warning:[/color] the returned entry will be detached from the dialogue engine.
 func pop_back() -> DialogueEntry:
 	var dialogue_entry_dictionary : Dictionary = _m_dialogue_tree.pop_back()
