@@ -70,7 +70,7 @@ signal dialogue_about_to_finish
 ## Emitted when the dialogue finishes.
 signal dialogue_finished
 ## Emitted when reset() is called and the dialogue started but hasn't finished, or an invalid goto or chosen option has been encountered.
-signal dialogue_cancelled
+signal dialogue_canceled
 
 
 enum {
@@ -127,7 +127,7 @@ func get_entry(p_entry_id : int) -> DialogueEntry:
 	return null
 
 
-## Returns the current dialogue entry. If there's no available entry or the dialogue has not started or has been cancelled or finished, it will return null.
+## Returns the current dialogue entry. If there's no available entry or the dialogue has not started or has been canceled or finished, it will return null.
 func get_current_entry() -> DialogueEntry:
 	var current_dialogue_id : int = clampi(_m_read_needle - 1, 0, size())
 	if has_entry_id(current_dialogue_id):
@@ -168,7 +168,7 @@ func advance(p_instant_finish : bool = false) -> void:
 
 	if _m_invalid_goto_detected:
 		__reset_needles()
-		dialogue_cancelled.emit()
+		dialogue_canceled.emit()
 
 	if p_instant_finish:
 		_m_read_needle = _m_dialogue_tree.size()
@@ -186,7 +186,7 @@ func advance(p_instant_finish : bool = false) -> void:
 			else:
 				push_warning("DialogueEngine: Invalid condition goto for on entry ID '%d' found.\nCancelling dialogue." % [current_dialogue_entry.get_id()])
 				__reset_needles()
-				dialogue_cancelled.emit()
+				dialogue_canceled.emit()
 				return
 		elif _m_read_needle != 0 and is_instance_valid(current_dialogue_entry) and current_dialogue_entry.has_options():
 			var chosen_option_id : int = current_dialogue_entry.get_chosen_option()
@@ -199,12 +199,12 @@ func advance(p_instant_finish : bool = false) -> void:
 				else:
 					push_warning("DialogueEngine: Invalid option goto for option ID '%d' with text '%s'.\nAssociated DialogueEntry ID '%d' with text '%s'\nCancelling dialogue." % [option_goto_id, current_dialogue_entry.get_option_text(option_goto_id), current_dialogue_entry.get_id(), current_dialogue_entry.get_text()])
 					__reset_needles()
-					dialogue_cancelled.emit()
+					dialogue_canceled.emit()
 					return
 			else:
 				push_warning("DialogueEngine: Invalid chosen option for option for DialogueEntry ID '%d' with text '%s'.\nCancelling dialogue." % [current_dialogue_entry.get_id(), current_dialogue_entry.get_text()])
 				__reset_needles()
-				dialogue_cancelled.emit()
+				dialogue_canceled.emit()
 				return
 
 	for read_id : int in range(_m_read_needle, _m_dialogue_tree.size()):
@@ -226,7 +226,7 @@ func advance(p_instant_finish : bool = false) -> void:
 					_m_read_needle = top_level_goto_id
 					_m_branch_id_needle = top_level_goto_dialogue_entry.get_branch_id()
 				else:
-					push_warning("DialogueEngine: Invalid top-level goto detected on DialogueEntry ID '%d' with text '%s'.\nDialogue will be cancelled upon the next advance() call." % [target_dialogue_entry.get_id(), target_dialogue_entry.get_text()])
+					push_warning("DialogueEngine: Invalid top-level goto detected on DialogueEntry ID '%d' with text '%s'.\nDialogue will be canceled upon the next advance() call." % [target_dialogue_entry.get_id(), target_dialogue_entry.get_text()])
 					_m_invalid_goto_detected = true
 			entry_visited.emit(target_dialogue_entry)
 			dialogue_continued.emit(target_dialogue_entry)
@@ -299,9 +299,9 @@ func pop_back() -> DialogueEntry:
 
 ## Resets the internal reading needle.
 func reset() -> void:
-	# If we are not finished reading, the dialogue was cancelled -- notify listeners
+	# If we are not finished reading, the dialogue was canceled -- notify listeners
 	if _m_read_needle != 0 and _m_read_needle != _m_dialogue_tree.size():
-		dialogue_cancelled.emit()
+		dialogue_canceled.emit()
 	__reset_needles()
 
 
@@ -376,9 +376,9 @@ func _init() -> void:
 			EngineDebugger.send_message("dialogue_engine:dialogue_finished", [get_instance_id()])
 		_success = dialogue_finished.connect(notify_debugger_of_dialogue_finished)
 
-		var notify_debugger_of_dialogue_cancelled : Callable = func () -> void:
-			EngineDebugger.send_message("dialogue_engine:dialogue_cancelled", [get_instance_id()])
-		_success = dialogue_cancelled.connect(notify_debugger_of_dialogue_cancelled)
+		var notify_debugger_of_dialogue_canceled : Callable = func () -> void:
+			EngineDebugger.send_message("dialogue_engine:dialogue_canceled", [get_instance_id()])
+		_success = dialogue_canceled.connect(notify_debugger_of_dialogue_canceled)
 
 	# Execute the "pure virtual" call -- users may (or may not) use this call to setup their dialogue
 	_setup()

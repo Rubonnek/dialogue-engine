@@ -89,8 +89,8 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			__clear_graph_node_highlights_if_needed(dialogue_engine_id)
 			if stored_dialogue_engine.has_meta(&"dialogue_finished"):
 				stored_dialogue_engine.remove_meta(&"dialogue_finished")
-			if stored_dialogue_engine.has_meta(&"dialogue_cancelled"):
-				stored_dialogue_engine.remove_meta(&"dialogue_cancelled")
+			if stored_dialogue_engine.has_meta(&"dialogue_canceled"):
+				stored_dialogue_engine.remove_meta(&"dialogue_canceled")
 			return true
 
 		"dialogue_engine:entry_visited":
@@ -116,12 +116,12 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			__update_graph_node_highlights_if_needed(stored_dialogue_engine)
 			return true
 
-		"dialogue_engine:dialogue_cancelled":
+		"dialogue_engine:dialogue_canceled":
 			# Track the entry visited to highlight it on the GraphEdit
 			var dialogue_engine_id : int = p_data[0]
 			var dialogue_engine_tree_item : TreeItem = _m_remote_dialogue_engine_id_to_tree_item_map_cache[dialogue_engine_id]
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
-			stored_dialogue_engine.set_meta(&"dialogue_cancelled", true)
+			stored_dialogue_engine.set_meta(&"dialogue_canceled", true)
 			__update_graph_node_highlights_if_needed(stored_dialogue_engine)
 			return true
 
@@ -215,7 +215,7 @@ func __is_selected_tree_item_related_to_dialogue_engine(p_dialogue_engine_id : i
 # FUTURE TODO: Make colors configurable through EditorSettings
 const _m_previously_visited_color : Color = Color(0.271, 0.447, 0.89)
 const _m_last_node_visited_color : Color = Color(0, 0.529, 0.318)
-const _m_cancelled_dialogue_color : Color = Color(0.69, 0, 0)
+const _m_canceled_dialogue_color : Color = Color(0.69, 0, 0)
 func __update_graph_node_highlights_if_needed(p_dialogue_engine : DialogueEngine) -> void:
 	var dialogue_engine_id : int = p_dialogue_engine.get_meta(&"remote_object_id")
 	var dialogue_entries_visited : Array = p_dialogue_engine.get_meta(&"dialogue_entries_visited", [])
@@ -238,8 +238,8 @@ func __update_graph_node_highlights_if_needed(p_dialogue_engine : DialogueEngine
 				var style_box_flat : StyleBoxFlat = graph_node.get_theme_stylebox(&"titlebar").duplicate(true)
 				if p_dialogue_engine.has_meta(&"dialogue_finished"):
 					style_box_flat.set_bg_color(_m_previously_visited_color)
-				elif p_dialogue_engine.has_meta(&"dialogue_cancelled"):
-					style_box_flat.set_bg_color(_m_cancelled_dialogue_color)
+				elif p_dialogue_engine.has_meta(&"dialogue_canceled"):
+					style_box_flat.set_bg_color(_m_canceled_dialogue_color)
 				else:
 					style_box_flat.set_bg_color(_m_last_node_visited_color)
 				graph_node.add_theme_stylebox_override(&"titlebar", style_box_flat)

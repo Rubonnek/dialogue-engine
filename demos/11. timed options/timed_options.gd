@@ -13,7 +13,7 @@ func _ready() -> void:
 	dialogue_engine.dialogue_started.connect(__on_dialogue_started)
 	dialogue_engine.dialogue_continued.connect(__on_dialogue_continued)
 	dialogue_engine.dialogue_finished.connect(__on_dialogue_finished)
-	dialogue_engine.dialogue_cancelled.connect(__on_dialogue_cancelled)
+	dialogue_engine.dialogue_canceled.connect(__on_dialogue_canceled)
 
 
 func _input(p_input_event : InputEvent) -> void:
@@ -102,6 +102,6 @@ func __on_dialogue_finished() -> void:
 	get_tree().quit()
 
 
-func __on_dialogue_cancelled() -> void:
-	print("Dialogue Cancelled! Exiting...")
+func __on_dialogue_canceled() -> void:
+	print("Dialogue Canceled! Exiting...")
 	get_tree().quit()

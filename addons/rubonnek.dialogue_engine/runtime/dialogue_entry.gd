@@ -250,7 +250,7 @@ func get_option_goto_entry(p_option_id : int) -> DialogueEntry:
 func choose_option(p_option_id : int) -> void:
 	# We set the option id without checking it at runtime.
 	# Due to how flexible the API is, there's a slight chance the user add option after calling this function.
-	# If the option id is invalid, DialogueEngine will emit the dialogue_cancelled signal which should be handled by the UI code which is independent of DialogueEngine.
+	# If the option id is invalid, DialogueEngine will emit the dialogue_canceled signal which should be handled by the UI code which is independent of DialogueEngine.
 	_m_dialogue_entry_dictionary[_key.CHOSEN_OPTION] = p_option_id
 	if OS.is_debug_build():
 		if has_option_id(p_option_id):
