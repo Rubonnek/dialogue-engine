@@ -5,7 +5,7 @@
 #                            DIALOGUE ENGINE                                |
 #           https://github.com/Rubonnek/dialogue-engine                     |
 #============================================================================
-# Copyright (c) 2023-2024 Wilson Enrique Alvarez Torres                     |
+# Copyright (c) 2023-2025 Wilson Enrique Alvarez Torres                     |
 #                                                                           |
 # Permission is hereby granted, free of charge, to any person obtaining     |
 # a copy of this software and associated documentation files (the           |
