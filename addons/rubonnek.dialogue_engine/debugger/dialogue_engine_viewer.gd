@@ -158,6 +158,15 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			__update_graph_if_needed(dialogue_engine_id)
 			return true
 
+		"dialogue_engine:deregister_engine":
+			var dialogue_engine_id : int = p_data[0]
+			if __is_selected_tree_item_related_to_dialogue_engine(dialogue_engine_id):
+				__on_tree_nothing_selected()
+			var dialogue_engine_tree_item : TreeItem = _m_remote_dialogue_engine_id_to_tree_item_map_cache[dialogue_engine_id]
+			var _success : bool = _m_remote_dialogue_engine_id_to_tree_item_map_cache.erase(dialogue_engine_id)
+			dialogue_engine_tree_item.free()
+			return true
+
 	push_warning("DialogueEngineViewer: This should not happen. Unmanaged capture: %s %s" % [p_message, p_data])
 	return false
 # ==== EDITOR DEBUGGER PLUGIN PASSTHROUGH FUNCTIONS ENDS ======

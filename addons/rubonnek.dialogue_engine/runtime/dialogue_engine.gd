@@ -354,6 +354,12 @@ func get_name() -> String:
 	return get_meta(&"name", "")
 
 
+## Deregisters the dialogue engine from the debugger.
+func deregister() -> void:
+	if EngineDebugger.is_active():
+		EngineDebugger.send_message("dialogue_engine:deregister_engine", [get_instance_id()])
+
+
 ## [color=yellow]Warning:[/color] overriding [code]_init()[/code] will make the debugger behave unexpectedly under certain scenarios. Make sure to call [code]super()[/code] within the subclass for proper debugger support.
 func _init() -> void:
 	if EngineDebugger.is_active():
