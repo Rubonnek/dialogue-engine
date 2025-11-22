@@ -223,7 +223,6 @@ func set_option_goto_id(p_option_id : int, p_goto_id : int) -> void:
 		push_warning("DialogueEntry: Attempted to set invalid option-level goto with id '%d' against DialogueEntry option id '%d' and text:\n\n\"%s\"\n\nThe previously installed goto will be removed if there's any." % [p_goto_id, p_option_id, get_option_text(p_option_id)])
 		if target_option.has(_key.GOTO):
 			var _ignore : bool = target_option.erase(_key.GOTO)
-	target_option[_key.GOTO] = p_goto_id
 	__send_entry_to_engine_viewer()
 
 
