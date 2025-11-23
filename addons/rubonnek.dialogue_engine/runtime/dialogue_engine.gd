@@ -173,64 +173,72 @@ func advance(p_instant_finish : bool = false) -> void:
 	if p_instant_finish:
 		_m_read_needle = _m_dialogue_tree.size()
 	else:
-		var current_dialogue_entry : DialogueEntry = get_current_entry()
-		if is_instance_valid(current_dialogue_entry) and current_dialogue_entry.has_condition():
-			entry_visited.emit(current_dialogue_entry)
-			var condition : Callable = current_dialogue_entry.get_condition()
-			var result : bool = condition.call()
-			var target_goto_id : int = current_dialogue_entry.get_condition_goto_ids()[result]
-			if target_goto_id != DialogueEntry.INVALID_CONDITION_GOTO and has_entry_id(target_goto_id):
-				var target_dialogue_entry : DialogueEntry = get_entry_at(target_goto_id)
-				_m_read_needle = target_goto_id
-				_m_branch_id_needle = target_dialogue_entry.get_branch_id()
-			else:
-				push_warning("DialogueEngine: Invalid condition goto for on entry ID '%d' found.\nCancelling dialogue." % [current_dialogue_entry.get_id()])
-				__reset_needles()
-				dialogue_canceled.emit()
-				return
-		elif _m_read_needle != 0 and is_instance_valid(current_dialogue_entry) and current_dialogue_entry.has_options():
-			var chosen_option_id : int = current_dialogue_entry.get_chosen_option()
-			if chosen_option_id != DialogueEntry.INVALID_CHOSEN_OPTION:
-				var option_goto_id : int = current_dialogue_entry.get_option_goto_id(chosen_option_id)
-				if option_goto_id != DialogueEntry.INVALID_OPTION_GOTO and has_entry_id(option_goto_id):
-					var target_dialogue_entry : DialogueEntry = get_entry_at(option_goto_id)
-					_m_read_needle = option_goto_id
+		# Use a stack-based approach instead of recursion
+		var processing_stack : Array = [true]
+
+		while not processing_stack.is_empty():
+			processing_stack.pop_back()
+
+			# Process current entry conditions/options (replaces the recursive call's pre-loop processing)
+			var current_dialogue_entry : DialogueEntry = get_current_entry()
+			if is_instance_valid(current_dialogue_entry) and current_dialogue_entry.has_condition():
+				entry_visited.emit(current_dialogue_entry)
+				var condition : Callable = current_dialogue_entry.get_condition()
+				var result : bool = condition.call()
+				var target_goto_id : int = current_dialogue_entry.get_condition_goto_ids()[result]
+				if target_goto_id != DialogueEntry.INVALID_CONDITION_GOTO and has_entry_id(target_goto_id):
+					var target_dialogue_entry : DialogueEntry = get_entry_at(target_goto_id)
+					_m_read_needle = target_goto_id
 					_m_branch_id_needle = target_dialogue_entry.get_branch_id()
 				else:
-					push_warning("DialogueEngine: Invalid option goto for option ID '%d' with text '%s'.\nAssociated DialogueEntry ID '%d' with text '%s'\nCancelling dialogue." % [option_goto_id, current_dialogue_entry.get_option_text(option_goto_id), current_dialogue_entry.get_id(), current_dialogue_entry.get_text()])
+					push_warning("DialogueEngine: Invalid condition goto for on entry ID '%d' found.\nCancelling dialogue." % [current_dialogue_entry.get_id()])
 					__reset_needles()
 					dialogue_canceled.emit()
 					return
-			else:
-				push_warning("DialogueEngine: Invalid chosen option for option for DialogueEntry ID '%d' with text '%s'.\nCancelling dialogue." % [current_dialogue_entry.get_id(), current_dialogue_entry.get_text()])
-				__reset_needles()
-				dialogue_canceled.emit()
-				return
-
-	for read_id : int in range(_m_read_needle, _m_dialogue_tree.size()):
-		var target_dialogue_entry : DialogueEntry = get_entry_at(read_id)
-		var target_dialogue_branch_id : int = target_dialogue_entry.get_branch_id()
-		if _m_branch_id_needle == target_dialogue_branch_id:
-			if target_dialogue_entry.has_condition():
-				_m_read_needle = read_id + 1 # adding + 1 so that get_current_entry() returns target_dialogue_entry upon the next advance() call
-				# This condition will be processed on the next advance() call
-				advance()
-				return
-			# Process the top-level goto entry if needed -- we'll need to update the read needle and branch needle in order to read that goto entry upon the next call to next()
-			var top_level_goto_id : int = target_dialogue_entry.get_goto_id()
-			if top_level_goto_id == DialogueEntry.GOTO_DEFAULT:
-				_m_read_needle = read_id + 1
-			else:
-				var top_level_goto_dialogue_entry : DialogueEntry = get_entry_at(top_level_goto_id)
-				if is_instance_valid(top_level_goto_dialogue_entry):
-					_m_read_needle = top_level_goto_id
-					_m_branch_id_needle = top_level_goto_dialogue_entry.get_branch_id()
+			elif _m_read_needle != 0 and is_instance_valid(current_dialogue_entry) and current_dialogue_entry.has_options():
+				var chosen_option_id : int = current_dialogue_entry.get_chosen_option()
+				if chosen_option_id != DialogueEntry.INVALID_CHOSEN_OPTION:
+					var option_goto_id : int = current_dialogue_entry.get_option_goto_id(chosen_option_id)
+					if option_goto_id != DialogueEntry.INVALID_OPTION_GOTO and has_entry_id(option_goto_id):
+						var target_dialogue_entry : DialogueEntry = get_entry_at(option_goto_id)
+						_m_read_needle = option_goto_id
+						_m_branch_id_needle = target_dialogue_entry.get_branch_id()
+					else:
+						push_warning("DialogueEngine: Invalid option goto for option ID '%d' with text '%s'.\nAssociated DialogueEntry ID '%d' with text '%s'\nCancelling dialogue." % [option_goto_id, current_dialogue_entry.get_option_text(option_goto_id), current_dialogue_entry.get_id(), current_dialogue_entry.get_text()])
+						__reset_needles()
+						dialogue_canceled.emit()
+						return
 				else:
-					push_warning("DialogueEngine: Invalid top-level goto detected on DialogueEntry ID '%d' with text '%s'.\nDialogue will be canceled upon the next advance() call." % [target_dialogue_entry.get_id(), target_dialogue_entry.get_text()])
-					_m_invalid_goto_detected = true
-			entry_visited.emit(target_dialogue_entry)
-			dialogue_continued.emit(target_dialogue_entry)
-			return
+					push_warning("DialogueEngine: Invalid chosen option for option for DialogueEntry ID '%d' with text '%s'.\nCancelling dialogue." % [current_dialogue_entry.get_id(), current_dialogue_entry.get_text()])
+					__reset_needles()
+					dialogue_canceled.emit()
+					return
+
+			# Find next entry in branch
+			for read_id : int in range(_m_read_needle, _m_dialogue_tree.size()):
+				var target_dialogue_entry : DialogueEntry = get_entry_at(read_id)
+				var target_dialogue_branch_id : int = target_dialogue_entry.get_branch_id()
+				if _m_branch_id_needle == target_dialogue_branch_id:
+					if target_dialogue_entry.has_condition():
+						_m_read_needle = read_id + 1 # adding + 1 so that get_current_entry() returns target_dialogue_entry upon the next iteration
+						# Push to stack to process this condition in the next iteration
+						processing_stack.push_back(true)
+						break
+					# Process the top-level goto entry if needed -- we'll need to update the read needle and branch needle in order to read that goto entry upon the next call to next()
+					var top_level_goto_id : int = target_dialogue_entry.get_goto_id()
+					if top_level_goto_id == DialogueEntry.GOTO_DEFAULT:
+						_m_read_needle = read_id + 1
+					else:
+						var top_level_goto_dialogue_entry : DialogueEntry = get_entry_at(top_level_goto_id)
+						if is_instance_valid(top_level_goto_dialogue_entry):
+							_m_read_needle = top_level_goto_id
+							_m_branch_id_needle = top_level_goto_dialogue_entry.get_branch_id()
+						else:
+							push_warning("DialogueEngine: Invalid top-level goto detected on DialogueEntry ID '%d' with text '%s'.\nDialogue will be canceled upon the next advance() call." % [target_dialogue_entry.get_id(), target_dialogue_entry.get_text()])
+							_m_invalid_goto_detected = true
+					entry_visited.emit(target_dialogue_entry)
+					dialogue_continued.emit(target_dialogue_entry)
+					return
 
 	__reset_needles()
 	dialogue_finished.emit()
