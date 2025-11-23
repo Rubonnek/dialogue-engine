@@ -146,8 +146,7 @@ func get_current_entry_id() -> int:
 ## Sets the current dialogue entry if available.
 func set_current_entry(p_id : int) -> void:
 	if has_entry_id(p_id):
-		var dialogue_entry : DialogueEntry = get_entry_at(p_id)
-		_m_branch_id_needle = dialogue_entry.get_branch_id()
+		_m_branch_id_needle = get_entry_branch_id(p_id)
 		_m_read_needle = p_id
 	else:
 		push_warning("DialogueEngine: Unable to set entry ID to '%d' since it's invalid." % p_id)
@@ -277,10 +276,9 @@ func get_entry_with_name(p_dialogue_entry_name : String) -> DialogueEntry:
 		push_warning("DialogueEngine: Attempted to return entry with empty name." % p_dialogue_entry_name)
 		return null
 	for entry_index : int in size():
-		var target_dialogue_entry_dictionary : Dictionary = _m_dialogue_tree[entry_index]
-		var dialogue_entry : DialogueEntry = DialogueEntry.new(entry_index, self, target_dialogue_entry_dictionary)
-		if dialogue_entry.get_name() == p_dialogue_entry_name:
-			return dialogue_entry
+		var entry_name : String = get_entry_name(entry_index)
+		if entry_name == p_dialogue_entry_name:
+			return get_entry_at(entry_index)
 	push_warning("DialogueEngine: Attempted to return entry with non-existent name \"%s\"." % p_dialogue_entry_name)
 	return null
 
@@ -385,6 +383,15 @@ func get_entry_text(p_entry_id : int) -> String:
 	return entry_dict.get(DialogueEntry._key.TEXT, "")
 
 
+## Returns the name of the entry at the specified ID.
+func get_entry_name(p_entry_id : int) -> String:
+	if not has_entry_id(p_entry_id):
+		push_warning("DialogueEngine: Attempted to get name for invalid entry ID '%d'." % p_entry_id)
+		return ""
+	var entry_dict : Dictionary = _m_dialogue_tree[p_entry_id]
+	return entry_dict.get(DialogueEntry._key.NAME, "")
+
+
 ## Injects the [DialogueEntry] at the end of the chain of its current branch.
 func push_back(p_dialogue_entry : DialogueEntry) -> void:
 	var write_needle : int = _m_dialogue_tree.size()
@@ -418,7 +425,7 @@ func clear() -> void:
 # Resets the needles used when advancing the dialogue.
 func __reset_needles() -> void:
 	_m_read_needle = 0
-	_m_branch_id_needle = 0
+	_m_branch_id_needle = DEFAULT_BRANCH_ID
 	_m_has_dialogue_started = false
 	_m_invalid_goto_detected = false
 
@@ -427,8 +434,7 @@ func __reset_needles() -> void:
 func get_unique_branch_ids() -> Array:
 	var branch_ids_dictionary : Dictionary = {}
 	for dialogue_entry_id : int in _m_dialogue_tree.size():
-		var dialogue_entry : DialogueEntry = get_entry_at(dialogue_entry_id)
-		var branch_id : int = dialogue_entry.get_branch_id()
+		var branch_id : int = get_entry_branch_id(dialogue_entry_id)
 		branch_ids_dictionary[branch_id] = true
 	return branch_ids_dictionary.keys()
 
