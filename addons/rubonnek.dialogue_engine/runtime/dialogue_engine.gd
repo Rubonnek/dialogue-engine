@@ -218,7 +218,7 @@ func advance(p_instant_finish : bool = false) -> void:
 					if entry_has_condition(read_id):
 						_m_read_needle = read_id + 1 # adding + 1 so that get_current_entry() returns target_dialogue_entry upon the next iteration
 						# Push to stack to process this condition in the next iteration
-						processing_stack.push_back(true)
+						_ignore = processing_stack.push_back(true)
 						break
 					# Process the top-level goto entry if needed -- we'll need to update the read needle and branch needle in order to read that goto entry upon the next call to next()
 					var top_level_goto_id : int = get_entry_goto_id(read_id)
