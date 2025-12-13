@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://dr6h7qrg0dy0c"]
+[gd_scene load_steps=3 format=3 uid="uid://dr6h7qrg0dy0c"]
 
 [ext_resource type="Script" path="res://addons/rubonnek.dialogue_engine/debugger/dialogue_engine_viewer.gd" id="1_i42ty"]
+[ext_resource type="StyleBox" uid="uid://b6l73jn6e1ebh" path="res://addons/rubonnek.dialogue_engine/debugger/tree_panel_style_box_flat.tres" id="2_7vkac"]
 
 [node name="DialogueEngine" type="PanelContainer" node_paths=PackedStringArray("dialogue_engine_viewer_input_blocker_center_container_", "dialogue_engine_viewer_input_blocker_hint_rich_text_label_", "dialogue_engine_viewer_engine_selection_line_edit_", "dialogue_engine_viewer_engine_selection_tree_", "dialogue_engine_viewer_graph_edit_")]
 custom_minimum_size = Vector2(0, 240)
@@ -31,6 +32,7 @@ placeholder_text = "Filter Dialogues"
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = ExtResource("2_7vkac")
 hide_root = true
 
 [node name="DialogueEngineViewerGraphEditDisplayVBoxContainer" type="VBoxContainer" parent="DialogueEngineViewerHSplitContainer"]
