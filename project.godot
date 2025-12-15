@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Godot Dialogue Engine"
+config/name="Dialogue Engine"
 run/main_scene="res://demos/1. simple dialogue/simple_log.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
