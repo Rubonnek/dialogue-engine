@@ -175,15 +175,8 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			var dialogue_engine_tree_item : TreeItem = _m_remote_dialogue_engine_id_to_tree_item_map_cache[dialogue_engine_id]
 			var stored_dialogue_engine : DialogueEngine = dialogue_engine_tree_item.get_metadata(column)
 			var remote_dialogue_entry_id : int = p_data[1]
-			# May need to resize the stored engine data in order inject the entry
-			var stored_dialogue_engine_data : Array = stored_dialogue_engine.get_data()
-			if stored_dialogue_engine_data.size() <= remote_dialogue_entry_id:
-				if stored_dialogue_engine_data.resize(remote_dialogue_entry_id + 1) != OK:
-					push_warning("DialogueEngineViewer: Unable to resize dialogue engine data array! The array won't be visualized properly.")
-					return true
 			var remote_dialogue_entry_data : Dictionary = p_data[2]
-			var remote_dialogue_entry : DialogueEntry = DialogueEntry.new(0, null, remote_dialogue_entry_data)
-			stored_dialogue_engine.set_entry_at(remote_dialogue_entry_id, remote_dialogue_entry)
+			stored_dialogue_engine.__inject(remote_dialogue_entry_id, remote_dialogue_entry_data)
 			__update_graph_if_needed(dialogue_engine_id)
 			return true
 

@@ -80,6 +80,7 @@ DEFAULT_BRANCH_ID = 0,
 
 
 var _m_dialogue_tree : Array[Dictionary] = []
+var _m_dialogue_entries : Array[DialogueEntry] = []
 var _m_read_needle : int = 0
 var _m_branch_id_needle : int = DEFAULT_BRANCH_ID
 var _m_has_dialogue_started : bool = false
@@ -92,6 +93,7 @@ func add_text_entry(p_text : String = "", p_branch_id : int = DEFAULT_BRANCH_ID)
 	var dialogue_entry : DialogueEntry = DialogueEntry.new(write_needle, self)
 	var dialogue_entry_dictionary : Dictionary = dialogue_entry.get_data()
 	_m_dialogue_tree.push_back(dialogue_entry_dictionary)
+	_m_dialogue_entries.push_back(dialogue_entry)
 	dialogue_entry.set_branch_id(p_branch_id)
 	dialogue_entry.set_text(p_text)
 	return dialogue_entry
@@ -103,6 +105,7 @@ func add_conditional_entry(p_callable : Callable, p_branch_id : int = DEFAULT_BR
 	var dialogue_entry : DialogueEntry = DialogueEntry.new(write_needle, self)
 	var dialogue_entry_dictionary : Dictionary = dialogue_entry.get_data()
 	_m_dialogue_tree.push_back(dialogue_entry_dictionary)
+	_m_dialogue_entries.push_back(dialogue_entry)
 	dialogue_entry.set_branch_id(p_branch_id)
 	dialogue_entry.set_condition(p_callable)
 	return dialogue_entry
@@ -261,8 +264,8 @@ func get_entry_at(p_entry_id : int) -> DialogueEntry:
 	if not has_entry_id(p_entry_id):
 		push_warning("DialogueEngine: Attempted to return entry with invalid ID \"%d\"." % p_entry_id)
 		return null
-	var target_dialogue_entry_dictionary : Dictionary = _m_dialogue_tree[p_entry_id]
-	return DialogueEntry.new(p_entry_id, self, target_dialogue_entry_dictionary)
+	var target_dialogue_entry : DialogueEntry = _m_dialogue_entries[p_entry_id]
+	return target_dialogue_entry
 
 
 ## Returns true if a [DialogueEntry] ID is available.
@@ -473,6 +476,14 @@ func deregister() -> void:
 
 func _to_string() -> String:
 	return "<DialogueEngine#%d>" % get_instance_id()
+
+
+# For synchronizing remote data received by the debugger
+func __inject(p_dialogue_entry_id: int, p_data: Dictionary) -> void:
+	_m_dialogue_tree.resize(p_dialogue_entry_id + 1)
+	_m_dialogue_tree[p_dialogue_entry_id] = p_data
+	_m_dialogue_entries.resize(p_dialogue_entry_id + 1)
+	_m_dialogue_entries[p_dialogue_entry_id] = DialogueEntry.new(p_dialogue_entry_id, self, p_data)
 
 
 ## [color=yellow]Warning:[/color] overriding [code]_init()[/code] will make the debugger behave unexpectedly under certain scenarios. Make sure to call [code]super()[/code] within the subclass for proper debugger support.

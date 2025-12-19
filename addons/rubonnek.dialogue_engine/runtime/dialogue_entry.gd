@@ -43,7 +43,7 @@ class_name DialogueEntry
 
 var _m_dialogue_entry_dictionary : Dictionary = {}
 var _m_dialogue_entry_dictionary_id : int = 0
-var _m_dialogue_engine : DialogueEngine = null
+var _m_dialogue_engine_weakref : WeakRef = null
 
 
 enum {
@@ -217,7 +217,7 @@ func get_option_text(p_option_id : int) -> String:
 func set_option_goto_id(p_option_id : int, p_goto_id : int) -> void:
 	var options_array : Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
 	var target_option : Dictionary = options_array[p_option_id]
-	if _m_dialogue_engine.has_entry_id(p_goto_id):
+	if get_engine().has_entry_id(p_goto_id):
 		target_option[_key.GOTO] = p_goto_id
 	else:
 		push_warning("DialogueEntry: Attempted to set invalid option-level goto with id '%d' against DialogueEntry option id '%d' and text:\n\n\"%s\"\n\nThe previously installed goto will be removed if there's any." % [p_goto_id, p_option_id, get_option_text(p_option_id)])
@@ -237,11 +237,11 @@ func get_option_goto_id(p_option_id : int) -> int:
 ## Returns the [DialogueEntry] stored at the specified option id.
 func get_option_goto_entry(p_option_id : int) -> DialogueEntry:
 	var goto_id : int = get_option_goto_id(p_option_id)
-	if not _m_dialogue_engine.has_entry_id(goto_id):
+	if not get_engine().has_entry_id(goto_id):
 		push_warning("DialogueEntry: Option ID '%d' has an invalid goto ID.\nThe option contains the text:\n\n\"%s\"\n\nThe associated dialogue entry ID is '%d' with text \"%s\"" % [p_option_id, get_option_text(p_option_id), _m_dialogue_entry_dictionary_id, get_text()])
 		return null
 	else:
-		var dialogue_entry : DialogueEntry = _m_dialogue_engine.get_entry_at(goto_id)
+		var dialogue_entry : DialogueEntry = get_engine().get_entry_at(goto_id)
 		return dialogue_entry
 
 
@@ -254,7 +254,7 @@ func choose_option(p_option_id : int) -> void:
 	if OS.is_debug_build():
 		if has_option_id(p_option_id):
 			var option_goto_id : int = get_option_goto_id(p_option_id)
-			if not _m_dialogue_engine.has_entry_id(option_goto_id):
+			if not get_engine().has_entry_id(option_goto_id):
 				push_warning("DialogueEntry: Chosen option id '%d' has an invalid option goto id.\nThe option contains the text:\n\n\"%s\"\n\nThe associated dialogue entry ID is '%d' with text \"%s\"" % [p_option_id, get_option_text(p_option_id), _m_dialogue_entry_dictionary_id, get_text()])
 		else:
 			push_warning("DialogueEntry: Chosen option id '%d' is currently available for entry with ID '%d' and text: \"%s\"." % [p_option_id, get_id(), get_text()])
@@ -375,9 +375,10 @@ func set_name(p_dialogue_entry_name : String) -> void:
 	# Do a uniqueness sanity check -- this is to warn the user that DialogueEngine.get_entry_with_name is consistent and works as expected:
 	if OS.is_debug_build():
 		if not p_dialogue_entry_name.is_empty():
-			for entry_id : int in _m_dialogue_engine.size():
+			var engine : DialogueEngine = get_engine()
+			for entry_id : int in engine.size():
 				if entry_id != _m_dialogue_entry_dictionary_id:
-					var dialogue_entry : DialogueEntry = _m_dialogue_engine.get_entry_at(entry_id)
+					var dialogue_entry : DialogueEntry = engine.get_entry_at(entry_id)
 					if p_dialogue_entry_name == dialogue_entry.get_name():
 						push_warning("DialogueEntry IDs \"%d\" and \"%d\" have the same name \"%s\" -- DialogueEntry.get_entry_by_name() won't work as expected." % [_m_dialogue_entry_dictionary_id, dialogue_entry.get_id(), p_dialogue_entry_name])
 	__send_entry_to_engine_viewer()
@@ -433,7 +434,7 @@ func remove_format() -> void:
 ## If the goto [DialogueEntry] has a different branch ID, then [method DialogueEngine.set_branch_id] will be called automatically to match the specified branch ID at the target [DialogueEntry] upon the next [method DialogueEngine.advance] call.[br]
 ## When the goto is not provided, [method DialogueEngine.advance] will search for the next dialogue entry on the same branch ID as [method DialogueEngine.get_branch_id].
 func set_goto_id(p_goto_id : int) -> void:
-	if _m_dialogue_engine.has_entry_id(p_goto_id):
+	if get_engine().has_entry_id(p_goto_id):
 		_m_dialogue_entry_dictionary[_key.GOTO] = p_goto_id
 	else:
 		push_warning("DialogueEntry: Attempted to set invalid top-level goto with id '%d' against DialogueEntry with id '%d' and text:\n\n\"%s\"\n\nThe previously installed goto will be removed if there's any." % [p_goto_id, _m_dialogue_entry_dictionary_id, get_text()])
@@ -464,8 +465,9 @@ func remove_goto_id() -> void:
 func get_goto_entry() -> DialogueEntry:
 	if _m_dialogue_entry_dictionary.has(_key.GOTO):
 		var goto_id : int = _m_dialogue_entry_dictionary[_key.GOTO]
-		if _m_dialogue_engine.has_entry_id(goto_id):
-			return _m_dialogue_engine.get_entry_at(goto_id)
+		var engine : DialogueEngine = get_engine()
+		if engine.has_entry_id(goto_id):
+			return engine.get_entry_at(goto_id)
 		else:
 			push_warning("DialogueEntry: Attempted to get invalid top-level goto with id '%d' from DialogueEntry with id '%d' and text:\n\n\"%s\"\n\nReturning invalid null DialogueEntry." % [goto_id, _m_dialogue_entry_dictionary_id, get_text()])
 			return null
@@ -558,12 +560,12 @@ func get_branch_id_as_text() -> String:
 ## [br]
 ## [color=yellow]Warning:[/color] this is part of a low-level API to inject dialogue entry objects into the [DialogueEngine] under certain scenarios. This function does not properly update the dialogue engine associated with this dialogue entry. Only use this function if you know what you are doing.
 func set_engine(p_dialogue_engine : DialogueEngine) -> void:
-	_m_dialogue_engine = p_dialogue_engine
+	_m_dialogue_engine_weakref = weakref(p_dialogue_engine)
 
 
 ## Returns the associated dialogue engine.
 func get_engine() -> DialogueEngine:
-	return _m_dialogue_engine
+	return _m_dialogue_engine_weakref.get_ref()
 
 
 ## Sets the associated dialogue entry data.
@@ -612,7 +614,7 @@ func __send_entry_to_engine_viewer() -> void:
 					stringified_metadata[key] = str(value)
 			duplicated_dialogue_entry_data[_key.METADATA] = stringified_metadata
 
-		var dialogue_engine_id : int = _m_dialogue_engine.get_instance_id()
+		var dialogue_engine_id : int = get_engine().get_instance_id()
 		EngineDebugger.send_message("dialogue_engine:sync_entry", [dialogue_engine_id, _m_dialogue_entry_dictionary_id, duplicated_dialogue_entry_data])
 
 
@@ -712,6 +714,6 @@ func _to_string() -> String:
 
 
 func _init(p_dialogue_entry_id : int = 0, p_dialogue_engine : DialogueEngine = null, p_target_dialogue_entry_dictionary : Dictionary = {}) -> void:
-	_m_dialogue_entry_dictionary = p_target_dialogue_entry_dictionary
 	_m_dialogue_entry_dictionary_id = p_dialogue_entry_id
-	_m_dialogue_engine = p_dialogue_engine
+	_m_dialogue_engine_weakref = weakref(p_dialogue_engine)
+	_m_dialogue_entry_dictionary = p_target_dialogue_entry_dictionary
