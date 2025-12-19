@@ -406,14 +406,17 @@ func push_back(p_dialogue_entry : DialogueEntry) -> void:
 	_m_dialogue_tree.push_back(p_dialogue_entry.get_data())
 	p_dialogue_entry.set_engine(self)
 	p_dialogue_entry.set_id(write_needle)
+	_m_dialogue_entries.push_back(p_dialogue_entry)
 
 
 ## Pops a [DialogueEntry] from the chain.[br]
 ## [br]
 ## [color=yellow]Warning:[/color] the returned entry will be detached from the dialogue engine.
 func pop_back() -> DialogueEntry:
-	var dialogue_entry_dictionary : Dictionary = _m_dialogue_tree.pop_back()
-	var dialogue_entry : DialogueEntry = DialogueEntry.new(-1, null, dialogue_entry_dictionary)
+	var _new_size : int = _m_dialogue_tree.resize(_m_dialogue_tree.size() - 1)
+	var dialogue_entry : DialogueEntry = _m_dialogue_entries.pop_back()
+	dialogue_entry.set_id(-1)
+	dialogue_entry.set_engine(null)
 	return dialogue_entry
 
 
