@@ -256,7 +256,12 @@ func is_empty() -> bool:
 
 ## Replaces the [DialogueEntry] at the provided ID.
 func set_entry_at(p_entry_id : int, p_dialogue_entry : DialogueEntry) -> void:
-	_m_dialogue_tree[p_entry_id] = p_dialogue_entry.get_data()
+	if has_entry_id(p_entry_id):
+		var data : Dictionary = p_dialogue_entry.get_data()
+		_m_dialogue_tree[p_entry_id] = data
+		_m_dialogue_entries[p_entry_id] = DialogueEntry.new(p_entry_id, self, data)
+	else:
+		push_error("DialogueEngine: No such entry with id '%d' found. Could not set entry.")
 
 
 ## Returns the [DialogueEntry] at the provided ID. Returns [code]null[/code] when the ID is invalid.
