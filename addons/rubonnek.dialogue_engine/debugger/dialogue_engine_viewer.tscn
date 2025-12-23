@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://addons/rubonnek.dialogue_engine/debugger/dialogue_engine_viewer.gd" id="1_i42ty"]
 [ext_resource type="StyleBox" uid="uid://b6l73jn6e1ebh" path="res://addons/rubonnek.dialogue_engine/debugger/tree_panel_style_box_flat.tres" id="2_7vkac"]
 
-[node name="DialogueEngine" type="PanelContainer" node_paths=PackedStringArray("dialogue_engine_viewer_input_blocker_center_container_", "dialogue_engine_viewer_input_blocker_hint_rich_text_label_", "dialogue_engine_viewer_engine_selection_line_edit_", "dialogue_engine_viewer_engine_selection_tree_", "dialogue_engine_viewer_graph_edit_")]
+[node name="Dialogue Engine" type="PanelContainer" node_paths=PackedStringArray("dialogue_engine_viewer_input_blocker_center_container_", "dialogue_engine_viewer_input_blocker_hint_rich_text_label_", "dialogue_engine_viewer_engine_selection_line_edit_", "dialogue_engine_viewer_engine_selection_tree_", "dialogue_engine_viewer_graph_edit_")]
 custom_minimum_size = Vector2(0, 240)
 anchors_preset = 15
 anchor_right = 1.0
