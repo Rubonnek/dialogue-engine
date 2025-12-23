@@ -586,6 +586,12 @@ func get_data() -> Dictionary:
 # Utility function for sending a whole entry to the viewer.
 func __send_entry_to_engine_viewer() -> void:
 	if EngineDebugger.is_active():
+		var dialogue_engine : DialogueEngine = get_engine()
+		if not is_instance_valid(dialogue_engine):
+			return
+		if dialogue_engine.has_meta(&"deregistered"):
+			return
+
 		# NOTE: Do not use the dialogue_entry API directly here when setting values to avoid sending unnecessary data to the debugger about the duplicated dialogue entry being sent to display
 
 		# The debugger viewer requires certain sections to be stringified -- duplicate the DialogueEntry data to avoid overriding the runtime data:
@@ -614,7 +620,7 @@ func __send_entry_to_engine_viewer() -> void:
 					stringified_metadata[key] = str(value)
 			duplicated_dialogue_entry_data[_key.METADATA] = stringified_metadata
 
-		var dialogue_engine_id : int = get_engine().get_instance_id()
+		var dialogue_engine_id : int = dialogue_engine.get_instance_id()
 		EngineDebugger.send_message("dialogue_engine:sync_entry", [dialogue_engine_id, _m_dialogue_entry_dictionary_id, duplicated_dialogue_entry_data])
 
 

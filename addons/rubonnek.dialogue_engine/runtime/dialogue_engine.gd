@@ -115,7 +115,8 @@ func add_conditional_entry(p_callable : Callable, p_branch_id : int = DEFAULT_BR
 func set_branch_id(p_branch_id : int) -> void:
 	_m_branch_id_needle = p_branch_id
 	if EngineDebugger.is_active():
-		EngineDebugger.send_message("dialogue_engine:set_branch_id", [get_instance_id(), p_branch_id])
+		if not has_meta(&"deregistered"):
+			EngineDebugger.send_message("dialogue_engine:set_branch_id", [get_instance_id(), p_branch_id])
 
 
 ## Returns the currently tracked branch ID that is being read by [method advance] calls.
@@ -468,7 +469,8 @@ func get_data() -> Array[Dictionary]:
 func set_name(p_name : String) -> void:
 	set_meta(&"name", p_name)
 	if EngineDebugger.is_active():
-		EngineDebugger.send_message("dialogue_engine:set_name", [get_instance_id(), p_name])
+		if not has_meta(&"deregistered"):
+			EngineDebugger.send_message("dialogue_engine:set_name", [get_instance_id(), p_name])
 
 
 ## Gets the name of the engine. Internally it's only useful in debug builds since the name is only used for the dialogue viewer in the debugger.
@@ -479,6 +481,15 @@ func get_name() -> String:
 ## Deregisters the dialogue engine from the debugger.
 func deregister() -> void:
 	if EngineDebugger.is_active():
+		set_meta(&"deregistered", true)
+		if dialogue_started.is_connected(__notify_debugger_to_reset_graph_colors):
+			dialogue_started.disconnect(__notify_debugger_to_reset_graph_colors)
+		if entry_visited.is_connected(__notify_debugger_of_entry_visited):
+			entry_visited.disconnect(__notify_debugger_of_entry_visited)
+		if dialogue_finished.is_connected(__notify_debugger_of_dialogue_finished):
+			dialogue_finished.disconnect(__notify_debugger_of_dialogue_finished)
+		if dialogue_canceled.is_connected(__notify_debugger_of_dialogue_canceled):
+			dialogue_canceled.disconnect(__notify_debugger_of_dialogue_canceled)
 		EngineDebugger.send_message("dialogue_engine:deregister_engine", [get_instance_id()])
 
 
@@ -494,6 +505,20 @@ func __inject(p_dialogue_entry_id: int, p_data: Dictionary) -> void:
 	_m_dialogue_entries[p_dialogue_entry_id] = DialogueEntry.new(p_dialogue_entry_id, self, p_data)
 
 
+# Setup event callbacks
+func __notify_debugger_to_reset_graph_colors() -> void:
+	EngineDebugger.send_message("dialogue_engine:dialogue_started", [get_instance_id()])
+
+func __notify_debugger_of_entry_visited(p_dialogue_entry : DialogueEntry) -> void:
+	EngineDebugger.send_message("dialogue_engine:entry_visited", [get_instance_id(), p_dialogue_entry.get_id()])
+
+func __notify_debugger_of_dialogue_finished() -> void:
+	EngineDebugger.send_message("dialogue_engine:dialogue_finished", [get_instance_id()])
+
+func __notify_debugger_of_dialogue_canceled() -> void:
+	EngineDebugger.send_message("dialogue_engine:dialogue_canceled", [get_instance_id()])
+
+
 ## [color=yellow]Warning:[/color] overriding [code]_init()[/code] will make the debugger behave unexpectedly under certain scenarios. Make sure to call [code]super()[/code] within the subclass for proper debugger support.
 func _init() -> void:
 	if EngineDebugger.is_active():
@@ -504,21 +529,10 @@ func _init() -> void:
 		EngineDebugger.send_message("dialogue_engine:register_engine", [get_instance_id(), name, path])
 
 		# Setup event callbacks
-		var notify_debugger_to_reset_graph_colors : Callable = func () -> void:
-			EngineDebugger.send_message("dialogue_engine:dialogue_started", [get_instance_id()])
-		var _success : int = dialogue_started.connect(notify_debugger_to_reset_graph_colors)
-
-		var notify_debugger_of_entry_visited : Callable = func (p_dialogue_entry : DialogueEntry) -> void:
-			EngineDebugger.send_message("dialogue_engine:entry_visited", [get_instance_id(), p_dialogue_entry.get_id()])
-		_success = entry_visited.connect(notify_debugger_of_entry_visited)
-
-		var notify_debugger_of_dialogue_finished : Callable = func () -> void:
-			EngineDebugger.send_message("dialogue_engine:dialogue_finished", [get_instance_id()])
-		_success = dialogue_finished.connect(notify_debugger_of_dialogue_finished)
-
-		var notify_debugger_of_dialogue_canceled : Callable = func () -> void:
-			EngineDebugger.send_message("dialogue_engine:dialogue_canceled", [get_instance_id()])
-		_success = dialogue_canceled.connect(notify_debugger_of_dialogue_canceled)
+		var _success : int = dialogue_started.connect(__notify_debugger_to_reset_graph_colors)
+		_success = entry_visited.connect(__notify_debugger_of_entry_visited)
+		_success = dialogue_finished.connect(__notify_debugger_of_dialogue_finished)
+		_success = dialogue_canceled.connect(__notify_debugger_of_dialogue_canceled)
 
 	# Execute the "pure virtual" call -- users may (or may not) use this call to setup their dialogue
 	_setup()
