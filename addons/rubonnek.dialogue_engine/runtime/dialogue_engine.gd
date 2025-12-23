@@ -499,10 +499,15 @@ func _to_string() -> String:
 
 # For synchronizing remote data received by the debugger
 func __inject(p_dialogue_entry_id: int, p_data: Dictionary) -> void:
-	_m_dialogue_tree.resize(p_dialogue_entry_id + 1)
-	_m_dialogue_tree[p_dialogue_entry_id] = p_data
-	_m_dialogue_entries.resize(p_dialogue_entry_id + 1)
-	_m_dialogue_entries[p_dialogue_entry_id] = DialogueEntry.new(p_dialogue_entry_id, self, p_data)
+	if p_dialogue_entry_id >= _m_dialogue_tree.size():
+		_m_dialogue_tree.resize(p_dialogue_entry_id + 1)
+		_m_dialogue_tree[p_dialogue_entry_id] = p_data
+		_m_dialogue_entries.resize(p_dialogue_entry_id + 1)
+		_m_dialogue_entries[p_dialogue_entry_id] = DialogueEntry.new(p_dialogue_entry_id, self, p_data)
+	else:
+		_m_dialogue_tree[p_dialogue_entry_id] = p_data
+		var entry : DialogueEntry = _m_dialogue_entries[p_dialogue_entry_id]
+		entry._m_dialogue_entry_dictionary = p_data
 
 
 # Setup event callbacks
