@@ -316,7 +316,10 @@ func has_condition() -> bool:
 
 
 ## Sets the condition goto IDs.
-func set_condition_goto_ids(p_goto_id_if_true : int, p_goto_id_if_false : int) -> void:
+func set_condition_goto_ids(p_goto_id_if_true : int = INVALID_CONDITION_GOTO, p_goto_id_if_false : int = INVALID_CONDITION_GOTO) -> void:
+	if p_goto_id_if_true == INVALID_CONDITION_GOTO and p_goto_id_if_false == INVALID_CONDITION_GOTO:
+		var _ignore : bool = _m_dialogue_entry_dictionary.erase(_key.CONDITION_GOTOS)
+		return
 	_m_dialogue_entry_dictionary[_key.CONDITION_GOTOS] = { true : p_goto_id_if_true, false : p_goto_id_if_false}
 	__send_entry_to_engine_viewer()
 
