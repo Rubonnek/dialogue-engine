@@ -5,14 +5,20 @@
 ![GitHub Release](https://img.shields.io/github/v/release/Rubonnek/dialogue-engine?label=Current%20Release)
 ![Github Downloads](https://img.shields.io/github/downloads/Rubonnek/dialogue-engine/total?logo=github&label=GitHub%20Downloads)
 
-A minimalistic dialogue engine for the Godot Game Engine.
+A powerful yet minimalistic dialogue engine for the Godot Game Engine, designed for creating branching narratives with player choices, conditions, dynamic text formatting, and metadata support.
 
 ## :star: Features
 
-- :evergreen_tree: Create dialogue trees with multiple choices and conditions
+- :evergreen_tree: Create complex dialogue trees with multiple choices, conditions, and branching paths using branch IDs
+- :arrows_counterclockwise: Support for conditional branching with user-defined callables for dynamic decision-making
+- :speech_balloon: Player choices with options, each linked to specific dialogue entries via goto IDs
+- :pencil2: Dynamic text formatting using callables, arrays, and dictionaries for personalized dialogue
+- :label: Named entries for easy reference and lookup within the dialogue tree
+- :package: Metadata support for attaching custom data (e.g., actor names, emotions) to dialogue entries
+- :signal_strength: Comprehensive signal system for dialogue events (started, continued, finished, canceled, etc.)
 - :books: Simple to use -- just write the dialogue in GDScript
-- :art: Easy to customize -- bring your own GUI nodes
-- :hammer_and_wrench: Automated dialogue graphing for easy debugging
+- :art: Easy to customize -- bring your own GUI nodes for presentation
+- :hammer_and_wrench: Automated dialogue graphing and debugging integration with Godot's debugger
 
 ## :book: Usage
 
