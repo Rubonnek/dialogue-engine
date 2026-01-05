@@ -1,6 +1,5 @@
 extends DialogueEngine
 
-
 func _setup() -> void:
 	add_text_entry("Hello, how are you?").set_metadata("author", "Peter")
 	add_text_entry("I'm fine, thank you! And you?").set_metadata("author", "John")

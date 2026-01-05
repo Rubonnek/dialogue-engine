@@ -1,6 +1,7 @@
 extends DialogueEngine
 
-var player_name : String # will be set by the UI code
+var player_name: String # will be set by the UI code
+
 
 func _setup() -> void:
 	add_text_entry("Welcome adventurer. May I know you name?").set_metadata(&"get_player_name", "The UI code will act accordingly and inject player_name into DialogueEngine.")

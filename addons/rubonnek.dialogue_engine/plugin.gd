@@ -30,8 +30,7 @@
 @tool
 extends EditorPlugin
 
-
-var m_editor_debugger_plugin : EditorDebuggerPlugin = preload("debugger/editor_debugger_plugin.gd").new()
+var m_editor_debugger_plugin: EditorDebuggerPlugin = preload("debugger/editor_debugger_plugin.gd").new()
 
 
 func _has_main_screen() -> bool:

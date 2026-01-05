@@ -4,7 +4,7 @@ enum { DEFAULT_BRANCH = 0, DIFFERENT_BRANCH_ONE, DIFFERENT_BRANCH_TWO, DIFFERENT
 
 
 func _setup() -> void:
-	var first_entry : DialogueEntry = add_text_entry("This is an example of...", DEFAULT_BRANCH)
+	var first_entry: DialogueEntry = add_text_entry("This is an example of...", DEFAULT_BRANCH)
 	first_entry.set_goto_id(add_text_entry("how gotos work against different branch IDs", DIFFERENT_BRANCH_TWO).get_id())
 	add_text_entry("Once you jump to a different branch ID, the DialogueEngine will only consider entries in that branch ID unless you jump to a different one.", DIFFERENT_BRANCH_TWO)
 	add_text_entry("If, for example, you add another text entry to a branch ID that is empty, it will show up in Debugger/DialogueEngine as such.", DIFFERENT_BRANCH_TWO)

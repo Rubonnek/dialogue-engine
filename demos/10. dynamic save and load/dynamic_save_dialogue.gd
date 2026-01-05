@@ -1,10 +1,9 @@
 extends DialogueEngine
 
-
-const SAVE_PATH : String = "user://save.dat"
-var counter : int = 0
-var start_counting_id : int = 0
-var log_history : Array = []
+const SAVE_PATH: String = "user://save.dat"
+var counter: int = 0
+var start_counting_id: int = 0
+var log_history: Array = []
 
 
 func get_log_history() -> Array:
@@ -24,9 +23,10 @@ func _setup() -> void:
 	load_state()
 
 
-func __log_history(p_dialogue_entry : DialogueEntry) -> void:
+func __log_history(p_dialogue_entry: DialogueEntry) -> void:
 	# Always track the log history:
 	log_history.push_back(p_dialogue_entry.get_formatted_text())
+
 
 func __continue_counting() -> void:
 	counter += 1
@@ -45,7 +45,7 @@ func load_state() -> void:
 	if FileAccess.file_exists(SAVE_PATH):
 		var file_handle: FileAccess = FileAccess.open(SAVE_PATH, FileAccess.READ)
 		counter = file_handle.get_var()
-		var entry_id : int = file_handle.get_var()
+		var entry_id: int = file_handle.get_var()
 		if has_entry_id(entry_id):
 			set_current_entry(entry_id)
 		else:

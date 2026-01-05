@@ -1,7 +1,7 @@
 extends VBoxContainer
 
-@export var dialogue_gdscript : GDScript = null
-var dialogue_engine : DialogueEngine = null
+@export var dialogue_gdscript: GDScript = null
+var dialogue_engine: DialogueEngine = null
 
 
 func _ready() -> void:
@@ -11,7 +11,8 @@ func _ready() -> void:
 	dialogue_engine.dialogue_finished.connect(__on_dialogue_finished)
 	dialogue_engine.dialogue_canceled.connect(__on_dialogue_canceled)
 
-func _input(p_input_event : InputEvent) -> void:
+
+func _input(p_input_event: InputEvent) -> void:
 	if p_input_event.is_action_pressed(&"ui_accept"):
 		dialogue_engine.advance()
 		accept_event() # to avoid hidding an button due to the input event travelling through the children
@@ -21,18 +22,20 @@ func __on_dialogue_started() -> void:
 	print("Dialogue Started!")
 
 
-var enabled_buttons : Array[Button] = []
-func __on_dialogue_continued(p_dialogue_entry : DialogueEntry) -> void:
-	var label : RichTextLabel = RichTextLabel.new()
+var enabled_buttons: Array[Button] = []
+
+
+func __on_dialogue_continued(p_dialogue_entry: DialogueEntry) -> void:
+	var label: RichTextLabel = RichTextLabel.new()
 	label.set_use_bbcode(true)
 	label.set_fit_content(true)
 	label.set_text("  > " + p_dialogue_entry.get_text())
 	add_child(label)
 
 	if p_dialogue_entry.has_options():
-		for option_id : int in range(0, p_dialogue_entry.get_option_count()):
-			var option_text : String = p_dialogue_entry.get_option_text(option_id)
-			var button : Button = Button.new()
+		for option_id: int in range(0, p_dialogue_entry.get_option_count()):
+			var option_text: String = p_dialogue_entry.get_option_text(option_id)
+			var button: Button = Button.new()
 			button.set_text(option_text)
 			add_child(button)
 			if option_id == 0:
@@ -42,12 +45,12 @@ func __on_dialogue_continued(p_dialogue_entry : DialogueEntry) -> void:
 		set_process_input(false)
 
 
-func __advance_dialogue_with_chosen_option(p_option_id : int) -> void:
-	for button : Button in enabled_buttons:
+func __advance_dialogue_with_chosen_option(p_option_id: int) -> void:
+	for button: Button in enabled_buttons:
 		button.set_disabled(true)
 	enabled_buttons.clear()
 
-	var current_entry : DialogueEntry = dialogue_engine.get_current_entry()
+	var current_entry: DialogueEntry = dialogue_engine.get_current_entry()
 	current_entry.choose_option(p_option_id)
 	dialogue_engine.advance()
 
@@ -62,4 +65,3 @@ func __on_dialogue_finished() -> void:
 func __on_dialogue_canceled() -> void:
 	print("Dialogue Canceled! Exiting...")
 	get_tree().quit()
-

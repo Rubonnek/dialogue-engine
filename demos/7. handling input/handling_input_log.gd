@@ -1,7 +1,7 @@
 extends VBoxContainer
 
-@export var dialogue_gdscript : GDScript = null
-var dialogue_engine : DialogueEngine = null
+@export var dialogue_gdscript: GDScript = null
+var dialogue_engine: DialogueEngine = null
 
 
 func _ready() -> void:
@@ -11,7 +11,8 @@ func _ready() -> void:
 	dialogue_engine.dialogue_finished.connect(__on_dialogue_finished)
 	dialogue_engine.dialogue_canceled.connect(__on_dialogue_canceled)
 
-func _input(p_input_event : InputEvent) -> void:
+
+func _input(p_input_event: InputEvent) -> void:
 	if p_input_event.is_action_pressed(&"ui_accept"):
 		dialogue_engine.advance()
 		accept_event()
@@ -21,12 +22,12 @@ func __on_dialogue_started() -> void:
 	print("Dialogue Started!")
 
 
-func __on_dialogue_continued(p_dialogue_entry : DialogueEntry) -> void:
-	var label : RichTextLabel = RichTextLabel.new()
+func __on_dialogue_continued(p_dialogue_entry: DialogueEntry) -> void:
+	var label: RichTextLabel = RichTextLabel.new()
 	label.set_use_bbcode(true)
 	label.set_fit_content(true)
 	if p_dialogue_entry.has_metadata("author"):
-		var author : String = p_dialogue_entry.get_metadata("author")
+		var author: String = p_dialogue_entry.get_metadata("author")
 		label.set_text("  > " + author + ": " + p_dialogue_entry.get_formatted_text())
 	else:
 		label.set_text("  > " + p_dialogue_entry.get_formatted_text())
@@ -45,13 +46,15 @@ func __on_dialogue_canceled() -> void:
 	print("Dialogue Canceled! Exiting...")
 	get_tree().quit()
 
+
 func __get_player_name() -> void:
-	var line_edit : LineEdit = LineEdit.new()
+	var line_edit: LineEdit = LineEdit.new()
 	add_child(line_edit)
-	var p_data : Array = []
-	line_edit.text_submitted.connect(func(text : String) -> void:
-		p_data.push_back(text)
-		)
+	var p_data: Array = []
+	line_edit.text_submitted.connect(
+		func(text: String) -> void:
+			p_data.push_back(text)
+	)
 	line_edit.grab_focus()
 	line_edit.set_placeholder("Enter your name.")
 	set_process_input(false)
