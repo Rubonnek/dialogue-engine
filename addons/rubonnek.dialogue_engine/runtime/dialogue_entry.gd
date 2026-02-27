@@ -61,7 +61,7 @@ enum {
 	## Makes [method get_formatted_text] use the [code]%[/code] [String] format operator as the format operation for the text. See [method set_format].
 	FORMAT_OPERATOR = 3,
 	## Makes [method get_formatted_text] return the text as-is with a warning. See [method set_format].
-	FORMAT_INVALID = 3,
+	FORMAT_INVALID = 4,
 }
 
 # Private struct for using integers as keys to the dictionary for fast access
