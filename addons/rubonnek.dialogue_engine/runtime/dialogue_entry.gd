@@ -506,7 +506,7 @@ func get_metadata(p_key: Variant, p_default_value: Variant = null) -> Variant:
 
 
 ## Returns true if there's metadata available with the specified key.
-func has_metadata(p_key: Variant) -> Variant:
+func has_metadata(p_key: Variant) -> bool:
 	var metadata: Dictionary = _m_dialogue_entry_dictionary.get(_key.METADATA, { })
 	return metadata.has(p_key)
 
