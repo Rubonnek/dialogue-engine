@@ -178,10 +178,10 @@ func advance(p_instant_finish: bool = false) -> void:
 	if p_instant_finish:
 		_m_read_needle = _m_dialogue_tree.size()
 	else:
-		# Stack-based approach for processing the dialogue entries.
-		var processing_stack: PackedByteArray = PackedByteArray([true])
-		while not processing_stack.is_empty():
-			var _ignore: int = processing_stack.resize(processing_stack.size() - 1)
+		# Stack-based approach for processing the dialogue entries -- we keep track of the stacks we are processing via a counter. Each conditional entry in the dialogue tree increases the stack counter.
+		var process_stack_counter: int = 1
+		while process_stack_counter != 0:
+			process_stack_counter += -1
 
 			# Process current entry conditions/options
 			var current_entry_id: int = get_current_entry_id()
@@ -218,13 +218,14 @@ func advance(p_instant_finish: bool = false) -> void:
 					return
 
 			# Find next entry in branch
-			for read_id: int in range(_m_read_needle, _m_dialogue_tree.size()):
+			for read_id_offset: int in _m_dialogue_tree.size() - _m_read_needle:
+				var read_id: int  = read_id_offset + _m_read_needle
 				var target_dialogue_branch_id: int = get_entry_branch_id(read_id)
 				if _m_branch_id_needle == target_dialogue_branch_id:
 					if entry_has_condition(read_id):
 						_m_read_needle = read_id + 1 # adding + 1 so that get_current_entry() returns target_dialogue_entry upon the next iteration
-						# Push to stack to process this condition in the next iteration
-						_ignore = processing_stack.push_back(true)
+						# Update the stack counter
+						process_stack_counter += 1
 						break
 					# Process the top-level goto entry if needed -- we'll need to update the read needle and branch needle in order to read that goto entry upon the next call to next()
 					var top_level_goto_id: int = get_entry_goto_id(read_id)
@@ -242,9 +243,11 @@ func advance(p_instant_finish: bool = false) -> void:
 					dialogue_continued.emit(target_dialogue_entry)
 					return
 
+	# There's nothing else to process. Reset the needles.
 	__reset_needles()
+
+	# We are finished. Notify listeners.
 	dialogue_finished.emit()
-	return
 
 
 ## Returns the number of dialogue tree entries stored.
