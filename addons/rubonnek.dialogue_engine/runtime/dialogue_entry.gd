@@ -267,9 +267,9 @@ func choose_option(p_option_id: int) -> void:
 		if has_option_id(p_option_id):
 			var option_goto_id: int = get_option_goto_id(p_option_id)
 			if not get_engine().has_entry_id(option_goto_id):
-				push_warning("DialogueEntry: Chosen option id '%d' has an invalid option goto id.\nThe option contains the text:\n\n\"%s\"\n\nThe associated dialogue entry ID is '%d' with text \"%s\"" % [p_option_id, get_option_text(p_option_id), _m_dialogue_entry_dictionary_id, get_text()])
+				push_warning("DialogueEntry: Cannot choose invalid option ID '%d' because it has an invalid option goto ID.\nThe option contains the text:\n\n\"%s\"\n\nThe associated dialogue entry ID is '%d' with text \"%s\"" % [p_option_id, get_option_text(p_option_id), _m_dialogue_entry_dictionary_id, get_text()])
 		else:
-			push_warning("DialogueEntry: Chosen option id '%d' is currently available for entry with ID '%d' and text: \"%s\"." % [p_option_id, get_id(), get_text()])
+			push_warning("DialogueEntry: Cannot choose invalid option ID '%d' for entry with ID '%d' with text: \"%s\"." % [p_option_id, get_id(), get_text()])
 
 
 ## Returns chosen option. If no chosen option was previously set, it will return [enum INVALID_CHOSEN_OPTION].
