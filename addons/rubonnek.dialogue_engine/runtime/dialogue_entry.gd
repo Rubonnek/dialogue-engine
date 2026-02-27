@@ -198,6 +198,9 @@ func add_option(p_text: String) -> int:
 ## Overwrites the option text entry.
 func set_option_text(p_option_id: int, p_text: String) -> void:
 	var options_array: Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
+	if p_option_id < 0 or p_option_id >= options_array.size():
+		push_warning("DialogueEntry: Attempted to set option text for invalid option ID '%d' in entry ID '%d'." % [p_option_id, _m_dialogue_entry_dictionary_id])
+		return
 	var target_option: Dictionary = options_array[p_option_id]
 	target_option[_key.TEXT] = p_text
 	__send_entry_to_engine_viewer()
@@ -206,6 +209,9 @@ func set_option_text(p_option_id: int, p_text: String) -> void:
 ## Returns the option text at the specified option id.
 func get_option_text(p_option_id: int) -> String:
 	var options_array: Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
+	if p_option_id < 0 or p_option_id >= options_array.size():
+		push_warning("DialogueEntry: Attempted to get option text for invalid option ID '%d' in entry ID '%d'." % [p_option_id, _m_dialogue_entry_dictionary_id])
+		return ""
 	var target_option: Dictionary = options_array[p_option_id]
 	var text: String = target_option.get(_key.TEXT, "")
 	return text
@@ -214,6 +220,9 @@ func get_option_text(p_option_id: int) -> String:
 ## Sets the option goto entry id.
 func set_option_goto_id(p_option_id: int, p_goto_id: int) -> void:
 	var options_array: Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
+	if p_option_id < 0 or p_option_id >= options_array.size():
+		push_warning("DialogueEntry: Attempted to set option goto for invalid option ID '%d' in entry ID '%d'." % [p_option_id, _m_dialogue_entry_dictionary_id])
+		return
 	var target_option: Dictionary = options_array[p_option_id]
 	if get_engine().has_entry_id(p_goto_id):
 		target_option[_key.GOTO] = p_goto_id
@@ -227,6 +236,9 @@ func set_option_goto_id(p_option_id: int, p_goto_id: int) -> void:
 ## Returns the option goto id stored at the specified option id. Returns [enum INVALID_OPTION_GOTO] when invalid.
 func get_option_goto_id(p_option_id: int) -> int:
 	var options_array: Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
+	if p_option_id < 0 or p_option_id >= options_array.size():
+		push_warning("DialogueEntry: Attempted to get option goto for invalid option ID '%d' in entry ID '%d'." % [p_option_id, _m_dialogue_entry_dictionary_id])
+		return INVALID_OPTION_GOTO
 	var target_option: Dictionary = options_array[p_option_id]
 	var goto_id: int = target_option.get(_key.GOTO, INVALID_OPTION_GOTO)
 	return goto_id
@@ -235,6 +247,8 @@ func get_option_goto_id(p_option_id: int) -> int:
 ## Returns the [DialogueEntry] stored at the specified option id.
 func get_option_goto_entry(p_option_id: int) -> DialogueEntry:
 	var goto_id: int = get_option_goto_id(p_option_id)
+	if goto_id == INVALID_OPTION_GOTO:
+		return null
 	if not get_engine().has_entry_id(goto_id):
 		push_warning("DialogueEntry: Option ID '%d' has an invalid goto ID.\nThe option contains the text:\n\n\"%s\"\n\nThe associated dialogue entry ID is '%d' with text \"%s\"" % [p_option_id, get_option_text(p_option_id), _m_dialogue_entry_dictionary_id, get_text()])
 		return null
@@ -283,9 +297,9 @@ func clear_options() -> void:
 ## Removes the option at the specified option id.
 func remove_option_at(p_option_id: int) -> void:
 	var options_array: Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
-	if p_option_id < options_array.size():
+	if p_option_id >= 0 and p_option_id < options_array.size():
 		options_array.remove_at(p_option_id)
-	__send_entry_to_engine_viewer()
+		__send_entry_to_engine_viewer()
 
 
 ## Attaches a condition to the entry. Useful for branching dialogues when certain conditions must be met. Consider using [method DialogueEngine.add_conditional_entry] instead.[br]
@@ -356,7 +370,7 @@ func has_options() -> bool:
 ## Returns true if the entry has options. False otherwise. Opposite of [method is_options_empty].
 func has_option_id(p_option_id: int) -> bool:
 	var options_array: Array = _m_dialogue_entry_dictionary.get(_key.OPTIONS, [])
-	return p_option_id < options_array.size()
+	return p_option_id >= 0 and p_option_id < options_array.size()
 
 
 ## Returns true if the entry has no options. False otherwise. Opposite of [method has_options].
