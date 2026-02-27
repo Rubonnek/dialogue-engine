@@ -174,6 +174,7 @@ func advance(p_instant_finish: bool = false) -> void:
 	if _m_invalid_goto_detected:
 		__reset_needles()
 		dialogue_canceled.emit()
+		return
 
 	if p_instant_finish:
 		_m_read_needle = _m_dialogue_tree.size()
