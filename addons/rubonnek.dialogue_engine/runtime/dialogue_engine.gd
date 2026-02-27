@@ -420,6 +420,9 @@ func push_back(p_dialogue_entry: DialogueEntry) -> void:
 ## [br]
 ## [color=yellow]Warning:[/color] the returned entry will be detached from the dialogue engine.
 func pop_back() -> DialogueEntry:
+	if _m_dialogue_tree.is_empty():
+		push_warning("DialogueEngine: Attempted to pop from an empty dialogue tree.")
+		return null
 	var _new_size: int = _m_dialogue_tree.resize(_m_dialogue_tree.size() - 1)
 	var dialogue_entry: DialogueEntry = _m_dialogue_entries.pop_back()
 	dialogue_entry.set_id(-1)
