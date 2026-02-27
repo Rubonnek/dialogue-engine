@@ -429,6 +429,8 @@ func reset() -> void:
 ## Clears all the dialogue added. After calling this function, [method is_empty] will return `true`.
 func clear() -> void:
 	_m_dialogue_tree.clear()
+	_m_dialogue_entries.clear()
+	__reset_needles()
 
 
 # Resets the needles used when advancing the dialogue.
