@@ -259,7 +259,7 @@ func set_entry_at(p_entry_id: int, p_dialogue_entry: DialogueEntry) -> void:
 		_m_dialogue_tree[p_entry_id] = data
 		_m_dialogue_entries[p_entry_id] = DialogueEntry.new(p_entry_id, self, data)
 	else:
-		push_error("DialogueEngine: No such entry with id '%d' found. Could not set entry.")
+		push_error("DialogueEngine: No such entry with id '%d' found. Could not set entry." % p_entry_id)
 
 
 ## Returns the [DialogueEntry] at the provided ID. Returns [code]null[/code] when the ID is invalid.
@@ -279,7 +279,7 @@ func has_entry_id(p_entry_id: int) -> bool:
 ## Returns the [DialogueEntry] with the provided name. See [method DialogueEntry.set_name].
 func get_entry_with_name(p_dialogue_entry_name: String) -> DialogueEntry:
 	if p_dialogue_entry_name == &"":
-		push_warning("DialogueEngine: Attempted to return entry with empty name." % p_dialogue_entry_name)
+		push_warning("DialogueEngine: Attempted to return entry with empty name.")
 		return null
 	for entry_index: int in size():
 		var entry_name: String = get_entry_name(entry_index)
