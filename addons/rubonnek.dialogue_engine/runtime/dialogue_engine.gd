@@ -455,9 +455,14 @@ func get_unique_branch_ids() -> Array:
 	return branch_ids_dictionary.keys()
 
 
-## Sets the [DialogueEngine] data.
+## Sets the [DialogueEngine] data. This will reset the dialogue engine state.
 func set_data(p_dialogue_engine_data: Array[Dictionary]) -> void:
 	_m_dialogue_tree = p_dialogue_engine_data
+	_m_dialogue_entries.resize(_m_dialogue_tree.size())
+	for dialogue_entry_id: int in _m_dialogue_tree.size():
+		var dialogue_entry_data: Dictionary = _m_dialogue_tree[dialogue_entry_id]
+		_m_dialogue_entries[dialogue_entry_id] = DialogueEntry.new(dialogue_entry_id, self, dialogue_entry_data)
+	__reset_needles()
 	if EngineDebugger.is_active():
 		for dialogue_entry_id: int in _m_dialogue_tree.size():
 			var dialogue_entry: DialogueEntry = get_entry_at(dialogue_entry_id)
