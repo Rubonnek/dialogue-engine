@@ -153,6 +153,11 @@ func set_current_entry(p_id: int) -> void:
 		push_warning("DialogueEngine: Unable to set entry ID to '%d' since it's invalid." % p_id)
 
 
+## Returns true if the dialogue has started.
+func has_started() -> bool:
+	return _m_has_dialogue_started
+
+
 ## Advances the dialogue and emits the next [DialogueEntry] with text data through the [signal dialogue_continued] signal. Entries with conditional data are emitted through the [signal entry_visited] signal.
 func advance(p_instant_finish: bool = false) -> void:
 	if _m_dialogue_tree.is_empty():
